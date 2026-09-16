@@ -1,0 +1,5 @@
+Dataset,Participants,Resolution,FPS,Positive (n),Negative (n),Surprise (n),Total
+CASME II,25,640x480,200,32,99,25,156
+SMIC (HS),16,640x480,100,51,70,43,164
+SAMM,28,1920x1080,200,26,92,15,133
+DSME,9,1920x1080,25 (->75),32,84,28,144

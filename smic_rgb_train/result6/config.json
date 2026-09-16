@@ -1,0 +1,88 @@
+{
+    "RESULT_DIR": "result6",
+    "NUM_EPOCHS": 60,
+    "BATCH_SIZE": 12,
+    "LEARNING_RATE": 0.0015,
+    "WEIGHT_DECAY": 3e-05,
+    "WARMUP_EPOCHS": 12,
+    "CLIP_GRAD_NORM": 0.8,
+    "MODEL": "ResNet-34 with AdamW, Ensemble Learning, Label Smoothing",
+    "train_transform": {
+        "RandomHorizontalFlip": {
+            "p": 0.6
+        },
+        "RandomRotation": {
+            "degrees": 8
+        },
+        "RandomResizedCrop": {
+            "size": [
+                224,
+                224
+            ],
+            "scale": [
+                0.75,
+                1.0
+            ]
+        },
+        "ColorJitter": {
+            "brightness": 0.15,
+            "contrast": 0.15,
+            "saturation": 0.15,
+            "hue": 0.08,
+            "p": 0.5
+        },
+        "RandomAffine": {
+            "degrees": 8,
+            "translate": [
+                0.08,
+                0.08
+            ],
+            "scale": [
+                0.9,
+                1.1
+            ],
+            "p": 0.4
+        },
+        "GaussianBlur": {
+            "kernel_size": 3,
+            "p": 0.3
+        },
+        "RandomErasing": {
+            "p": 0.15,
+            "scale": [
+                0.02,
+                0.15
+            ],
+            "ratio": [
+                0.3,
+                3.3
+            ]
+        },
+        "RandomPerspective": {
+            "distortion_scale": 0.2,
+            "p": 0.3
+        },
+        "ToTensor": {},
+        "Normalize": {
+            "mean": [
+                0.485,
+                0.456,
+                0.406
+            ],
+            "std": [
+                0.229,
+                0.224,
+                0.225
+            ]
+        }
+    },
+    "reproducibility": {
+        "seeds": [
+            42,
+            43,
+            44
+        ],
+        "cudnn.benchmark": false,
+        "cudnn.deterministic": true
+    }
+}

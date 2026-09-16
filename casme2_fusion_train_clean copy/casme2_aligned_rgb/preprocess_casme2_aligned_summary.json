@@ -1,0 +1,10 @@
+{
+  "raw_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\data\\CASME2_RAW_selected\\CASME2_RAW_selected",
+  "excel_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\data\\CASME2_RAW_selected\\CASME2-coding-20140508.xlsx",
+  "output_rgb_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\casme2_fusion_train_clean copy\\casme2_aligned_rgb",
+  "mapping_file": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\casme2_fusion_train_clean copy\\casme2_clean_labels.csv",
+  "total_sequences": 156,
+  "done": 156,
+  "skipped": 0,
+  "failed": 0
+}

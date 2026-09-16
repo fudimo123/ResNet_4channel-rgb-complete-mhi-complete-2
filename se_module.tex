@@ -1,0 +1,166 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage{tikz}
+\usepackage{amssymb}
+\usetikzlibrary{positioning, arrows.meta, 3d, calc, shapes}
+
+\begin{document}
+\begin{tikzpicture}[
+    x={(1cm,0cm)}, y={(0cm,1cm)}, z={(-0.35cm,-0.25cm)}, % Z points Down-Left, so -z (depth) points Up-Right
+    scale=1.5,
+    font=\small \sffamily,
+    >=Stealth,
+    % Styles
+    feature/.style={
+        draw=green!40!black, fill=green!20, opacity=0.9, line width=0.8pt, join=round
+    },
+    fc/.style={
+        draw=orange!60!black, fill=orange!30, opacity=0.9, line width=0.8pt, join=round
+    },
+    activation/.style={
+        draw=blue!60!black, fill=blue!10, opacity=0.8, line width=0.8pt, circle, inner sep=0pt, minimum size=0.8cm
+    },
+    op/.style={
+        draw=black, fill=white, opacity=1.0, circle, inner sep=0pt, minimum size=0.5cm, font=\large, line width=0.8pt
+    },
+    txt/.style={
+        align=center, font=\footnotesize, text=black
+    }
+]
+
+% --- Definitions ---
+\def\h{2.0} % Height of full vector (1024)
+\def\w{0.4} % Width of vector
+\def\d{0.4} % Depth of vector
+\def\hred{0.6} % Height of reduced vector (64)
+
+% --- Macro for drawing 3D Box ---
+% #1: Position (center base), #2: Width, #3: Height, #4: Depth, #5: Style
+\newcommand{\drawBox}[5]{
+    \coordinate (center) at #1;
+    \def\bw{#2}
+    \def\bh{#3}
+    \def\bd{#4}
+    
+    % Calculate corners relative to center base
+    % Front Face (z=0)
+    \coordinate (flb) at ($(center) + (-\bw/2, 0, 0)$); % Front Left Bottom
+    \coordinate (frb) at ($(center) + (\bw/2, 0, 0)$);  % Front Right Bottom
+    \coordinate (frt) at ($(center) + (\bw/2, \bh, 0)$); % Front Right Top
+    \coordinate (flt) at ($(center) + (-\bw/2, \bh, 0)$); % Front Left Top
+    
+    % Back Face (z=-\bd) -> Visual shift Up-Right due to z vector
+    \coordinate (blb) at ($(center) + (-\bw/2, 0, -\bd)$);
+    \coordinate (brb) at ($(center) + (\bw/2, 0, -\bd)$);
+    \coordinate (brt) at ($(center) + (\bw/2, \bh, -\bd)$);
+    \coordinate (blt) at ($(center) + (-\bw/2, \bh, -\bd)$);
+    
+    % Draw visible faces (Front, Right, Top)
+    
+    % Right Face
+    \draw[#5] (frb) -- (brb) -- (brt) -- (frt) -- cycle;
+    
+    % Top Face
+    \draw[#5] (flt) -- (frt) -- (brt) -- (blt) -- cycle;
+    
+    % Front Face
+    \draw[#5] (flb) -- (frb) -- (frt) -- (flt) -- cycle;
+}
+
+% --- Input U ---
+% Position: (0,0,0) - base center
+\coordinate (U_pos) at (0, -1, 0); 
+\drawBox{(0, -\h/2, 0)}{\w}{\h}{\d}{feature}
+
+% Label for U
+\node[txt] at (0, -\h - 0.2, 0) {Fused Feature\\$U \in \mathbb{R}^{1024}$};
+
+% --- Split Point ---
+\coordinate (split) at (1.5, 0, 0);
+\draw[->, line width=1.2pt] (0.2, 0, 0) -- (split);
+
+% --- Path 2: SE Attention (Bottom Loop) ---
+% Route downwards
+\def\pathLowY{-2.5}
+\def\pathStartX{2.5}
+
+\draw[line width=1.2pt] (split) -- (1.5, \pathLowY, 0) -- (\pathStartX, \pathLowY, 0);
+\draw[->, line width=1.2pt] (\pathStartX, \pathLowY, 0) -- (3.2, \pathLowY, 0);
+
+% --- FC1 (Reduction) ---
+\coordinate (fc1_x) at (3.5);
+\drawBox{(fc1_x, \pathLowY - \hred/2, 0)}{\w}{\hred}{\d}{fc}
+
+% Label FC1
+\node[txt] at (fc1_x, \pathLowY - \hred/2 - 0.8, 0) {FC (Reduce)\\$W_1 \in \mathbb{R}^{\frac{D}{r} \times D}$};
+
+% Arrow to ReLU
+\coordinate (relu_pos) at (5.5, \pathLowY, 0);
+\draw[->, line width=1.2pt, shorten >=1pt] (fc1_x + 0.3, \pathLowY, 0) -- (relu_pos);
+
+% --- ReLU ---
+\node[activation] at (relu_pos) (relu) {$\delta$};
+\node[txt] at ($(relu_pos) + (0, -0.7, 0)$) {ReLU};
+
+% Arrow to FC2
+\coordinate (fc2_x) at (7.5);
+\draw[->, line width=1.2pt] (relu) -- (fc2_x - 0.3, \pathLowY, 0);
+
+% --- FC2 (Expansion) ---
+\drawBox{(fc2_x, \pathLowY - \h/2, 0)}{\w}{\h}{\d}{fc}
+
+% Label FC2
+\node[txt] at (fc2_x, \pathLowY - \h/2 - 0.8, 0) {FC (Expand)\\$W_2 \in \mathbb{R}^{D \times \frac{D}{r}}$};
+
+% Arrow to Sigmoid
+\coordinate (sigmoid_pos) at (9.5, \pathLowY, 0);
+\draw[->, line width=1.2pt, shorten >=1pt] (fc2_x + 0.3, \pathLowY, 0) -- (sigmoid_pos);
+
+% --- Sigmoid ---
+\node[activation] at (sigmoid_pos) (sigmoid) {$\sigma$};
+\node[txt] at ($(sigmoid_pos) + (0, -0.7, 0)$) {Sigmoid};
+
+% Output w (Weight Vector)
+\coordinate (w_x) at (11.5);
+\coordinate (w_base) at (w_x, \pathLowY - \h/2, 0);
+% Draw w (Yellow)
+\drawBox{(w_x, \pathLowY - \h/2, 0)}{\w}{\h}{\d}{feature, fill=yellow!20, draw=orange!80!black}
+
+\node[txt] at (w_x, \pathLowY - \h/2 - 0.8, 0) {Weights\\$w$};
+
+% Arrow from Sigmoid to w
+\draw[->, line width=1.2pt] (sigmoid) -- (w_x - 0.3, \pathLowY, 0);
+
+
+% --- Reweight Operation ---
+% Merge Point aligned with w
+\coordinate (merge_point) at (w_x, 0, 0);
+
+% Identity Path
+\draw[->, line width=1.2pt, shorten >=1pt] (split) -- (merge_point);
+
+% Reweight Node
+\node[op] at (merge_point) (mul) {$\otimes$};
+
+% Arrow from w to Mul (Straight Up)
+% Start from top of w
+\coordinate (w_top) at (w_x, \pathLowY + \h/2, 0);
+\draw[->, line width=1.2pt, shorten >=1pt] (w_top) -- (mul);
+
+% --- Output U_refined ---
+\coordinate (out_x) at (13.5);
+\drawBox{(out_x, -\h/2, 0)}{\w}{\h}{\d}{feature, fill=green!30}
+
+\draw[->, line width=1.2pt] (mul) -- (out_x - 0.3, 0, 0);
+
+% Label Output
+\node[txt] at (out_x, -\h/2 - 0.8, 0) {Refined Feature\\$U_{refined} \in \mathbb{R}^{1024}$};
+
+% --- Group Labels ---
+% Excitation
+\node[txt, color=orange!80!black, font=\bfseries\large] at (6.5, \pathLowY + 1.5, 0) {Excitation};
+
+% Reweight Label (Moved to not overlap)
+\node[txt, color=blue!80!black, font=\bfseries\large] at (w_x, 0.8, 0) {Reweight};
+
+\end{tikzpicture}
+\end{document}

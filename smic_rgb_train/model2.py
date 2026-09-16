@@ -1,0 +1,317 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+def conv3x3(in_planes, out_planes, stride=1):
+    """3x3 convolution with padding"""
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
+                     padding=1, bias=False)
+
+
+class BasicBlock(nn.Module):
+    expansion = 1
+
+    def __init__(self, inplanes, planes, stride=1, downsample=None):
+        super(BasicBlock, self).__init__()
+        self.conv1 = conv3x3(inplanes, planes, stride)
+        self.bn1 = nn.BatchNorm2d(planes)
+        self.relu = nn.ReLU(inplace=True)
+        self.conv2 = conv3x3(planes, planes)
+        self.bn2 = nn.BatchNorm2d(planes)
+        self.downsample = downsample
+        self.stride = stride
+
+    def forward(self, x):
+        residual = x
+
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = self.relu(out)
+
+        out = self.conv2(out)
+        out = self.bn2(out)
+
+        if self.downsample is not None:
+            residual = self.downsample(x)
+
+        out += residual
+        out = self.relu(out)
+
+        return out
+
+
+class ChannelAttention(nn.Module):
+    def __init__(self, in_planes, ratio=16):
+        super(ChannelAttention, self).__init__()
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        self.max_pool = nn.AdaptiveMaxPool2d(1)
+        
+        self.fc1 = nn.Conv2d(in_planes, in_planes // ratio, 1, bias=False)
+        self.relu1 = nn.ReLU()
+        self.fc2 = nn.Conv2d(in_planes // ratio, in_planes, 1, bias=False)
+        self.sigmoid = nn.Sigmoid()
+        
+    def forward(self, x):
+        avg_out = self.fc2(self.relu1(self.fc1(self.avg_pool(x))))
+        max_out = self.fc2(self.relu1(self.fc1(self.max_pool(x))))
+        out = avg_out + max_out
+        return self.sigmoid(out)
+
+
+class SpatialAttention(nn.Module):
+    def __init__(self, kernel_size=7):
+        super(SpatialAttention, self).__init__()
+        
+        assert kernel_size in (3, 7), 'kernel size must be 3 or 7'
+        padding = 3 if kernel_size == 7 else 1
+        
+        self.conv1 = nn.Conv2d(2, 1, kernel_size, padding=padding, bias=False)
+        self.sigmoid = nn.Sigmoid()
+        
+    def forward(self, x):
+        avg_out = torch.mean(x, dim=1, keepdim=True)
+        max_out, _ = torch.max(x, dim=1, keepdim=True)
+        x = torch.cat([avg_out, max_out], dim=1)
+        x = self.conv1(x)
+        return self.sigmoid(x)
+
+
+class CBAM(nn.Module):
+    def __init__(self, in_planes, ratio=8, kernel_size=5):
+        super(CBAM, self).__init__()
+        self.ca = ChannelAttention(in_planes, ratio)
+        self.sa = SpatialAttention(kernel_size)
+        
+    def forward(self, x):
+        x = x * self.ca(x)
+        x = x * self.sa(x)
+        return x
+
+
+class SEBlock(nn.Module):
+    def __init__(self, channel, reduction=16):
+        super(SEBlock, self).__init__()
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        self.fc = nn.Sequential(
+            nn.Linear(channel, channel // reduction, bias=False),
+            nn.ReLU(inplace=True),
+            nn.Linear(channel // reduction, channel, bias=False),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        b, c, _, _ = x.size()
+        y = self.avg_pool(x).view(b, c)
+        y = self.fc(y).view(b, c, 1, 1)
+        return x * y.expand_as(x)
+
+
+class ResNet(nn.Module):
+
+    def __init__(self, block, layers, num_classes=1000, in_channels=3, dropout_p=0.3):
+        self.inplanes = 64
+        super(ResNet, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels, 64, kernel_size=7, stride=2, padding=3,
+                               bias=False)
+        self.bn1 = nn.BatchNorm2d(64)
+        self.relu = nn.ReLU(inplace=True)
+        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        self.layer1 = self._make_layer(block, 64, layers[0])
+        self.se1 = SEBlock(64, reduction=8)  # Add SE block after layer1
+        self.dropout1 = nn.Dropout2d(p=0.03)  # Further reduced spatial dropout
+        self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
+        self.cbam2 = CBAM(128, ratio=8, kernel_size=7)  # Add CBAM after layer2
+        self.se2 = SEBlock(128, reduction=8)  # Add SE block after layer2
+        self.dropout2 = nn.Dropout2d(p=0.03)  # Further reduced spatial dropout
+        self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
+        self.cbam3 = CBAM(256, ratio=8, kernel_size=7)  # Optimized attention after layer3
+        self.se3 = SEBlock(256, reduction=8)  # Add SE block after layer3
+        self.dropout3 = nn.Dropout2d(p=0.03)  # Further reduced spatial dropout
+        self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
+        self.cbam4 = CBAM(512, ratio=8, kernel_size=7)  # Optimized attention after layer4
+        self.se4 = SEBlock(512, reduction=8)  # Add SE block after layer4
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        # Enhanced multi-layer classifier
+        self.dropout_pre = nn.Dropout(p=dropout_p * 0.4)
+        self.fc_intermediate1 = nn.Linear(512 * block.expansion, 512)
+        self.bn_fc1 = nn.BatchNorm1d(512)
+        self.dropout_mid = nn.Dropout(p=dropout_p * 0.5)
+        self.fc_intermediate2 = nn.Linear(512, 256)
+        self.bn_fc2 = nn.BatchNorm1d(256)
+        self.dropout_post = nn.Dropout(p=dropout_p * 0.6)
+        self.fc = nn.Linear(256, num_classes)
+
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+
+    def _make_layer(self, block, planes, blocks, stride=1):
+        downsample = None
+        if stride != 1 or self.inplanes != planes * block.expansion:
+            downsample = nn.Sequential(
+                nn.Conv2d(self.inplanes, planes * block.expansion,
+                          kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(planes * block.expansion),
+            )
+
+        layers = []
+        layers.append(block(self.inplanes, planes, stride, downsample))
+        self.inplanes = planes * block.expansion
+        for i in range(1, blocks):
+            layers.append(block(self.inplanes, planes))
+
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.maxpool(x)
+
+        x = self.layer1(x)
+        x = self.se1(x)
+        x = self.dropout1(x)
+        x = self.layer2(x)
+        x = self.cbam2(x)
+        x = self.se2(x)
+        x = self.dropout2(x)
+        x = self.layer3(x)
+        x = self.cbam3(x)
+        x = self.se3(x)
+        x = self.dropout3(x)
+        x = self.layer4(x)
+        x = self.cbam4(x)
+        x = self.se4(x)
+
+        x = self.avgpool(x)
+        x = x.view(x.size(0), -1)
+        
+        # Enhanced multi-layer classifier
+        x = self.dropout_pre(x)
+        x = self.fc_intermediate1(x)
+        x = self.bn_fc1(x)
+        x = self.relu(x)
+        x = self.dropout_mid(x)
+        x = self.fc_intermediate2(x)
+        x = self.bn_fc2(x)
+        x = self.relu(x)
+        x = self.dropout_post(x)
+        x = self.fc(x)
+
+        return x
+
+
+import torch.nn as nn
+from torchvision.models import resnet18 as torchvision_resnet18
+
+def resnet18(pretrained=False, **kwargs):
+    """Constructs a ResNet-18 model.
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    """
+    in_channels = kwargs.get('in_channels', 3)
+    num_classes = kwargs.get('num_classes', 1000)
+    dropout_p = kwargs.get('dropout_p', 0.5)
+
+    if pretrained:
+        model = torchvision_resnet18(weights='IMAGENET1K_V1')
+        
+        # Modify the first convolutional layer to accept the specified number of channels
+        if in_channels != 3:
+            original_weights = model.conv1.weight.clone()
+            new_conv1 = nn.Conv2d(in_channels, 64, kernel_size=7, stride=2, padding=3, bias=False)
+            with torch.no_grad():
+                # Copy original weights for the first 3 channels
+                new_conv1.weight[:, :3, :, :] = original_weights
+                # Initialize remaining channels (e.g., by averaging original weights)
+                for i in range(3, in_channels):
+                    new_conv1.weight[:, i, :, :] = torch.mean(original_weights, dim=1)
+            model.conv1 = new_conv1
+
+        num_ftrs = model.fc.in_features
+        model.fc = nn.Sequential(
+            nn.Dropout(p=dropout_p),
+            nn.Linear(num_ftrs, num_classes)
+        )
+    else:
+        model = ResNet(BasicBlock, [2, 2, 2, 2], **kwargs)
+
+    return model
+
+def resnet34(pretrained=False, **kwargs):
+    """Constructs a ResNet-34 model.
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    """
+    in_channels = kwargs.get('in_channels', 3)
+    num_classes = kwargs.get('num_classes', 1000)
+    dropout_p = kwargs.get('dropout_p', 0.3)
+
+    if pretrained:
+        from torchvision.models import resnet34 as torchvision_resnet34
+        model = torchvision_resnet34(weights='IMAGENET1K_V1')
+        
+        # Modify the first convolutional layer to accept the specified number of channels
+        if in_channels != 3:
+            original_weights = model.conv1.weight.clone()
+            new_conv1 = nn.Conv2d(in_channels, 64, kernel_size=7, stride=2, padding=3, bias=False)
+            with torch.no_grad():
+                # Copy original weights for the first 3 channels
+                new_conv1.weight[:, :3, :, :] = original_weights
+                # Initialize remaining channels (e.g., by averaging original weights)
+                for i in range(3, in_channels):
+                    new_conv1.weight[:, i, :, :] = torch.mean(original_weights, dim=1)
+            model.conv1 = new_conv1
+
+        num_ftrs = model.fc.in_features
+        model.fc = nn.Sequential(
+            nn.Dropout(p=dropout_p),
+            nn.Linear(num_ftrs, num_classes)
+        )
+    else:
+        model = ResNet(BasicBlock, [3, 4, 6, 3], **kwargs)
+
+    return model
+
+from torchvision.models import resnet50 as torchvision_resnet50
+
+def resnet50(pretrained=False, **kwargs):
+    """Constructs a ResNet-50 model.
+
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+    """
+    in_channels = kwargs.get('in_channels', 3)
+    num_classes = kwargs.get('num_classes', 1000)
+
+    if pretrained:
+        model = torchvision_resnet50(weights='IMAGENET1K_V1')
+        
+        # Modify the first convolutional layer to accept the specified number of channels
+        if in_channels != 3:
+            original_weights = model.conv1.weight.clone()
+            new_conv1 = nn.Conv2d(in_channels, 64, kernel_size=7, stride=2, padding=3, bias=False)
+            with torch.no_grad():
+                # Copy original weights for the first 3 channels
+                new_conv1.weight[:, :3, :, :] = original_weights
+                # Initialize remaining channels (e.g., by averaging original weights)
+                for i in range(3, in_channels):
+                    new_conv1.weight[:, i, :, :] = torch.mean(original_weights, dim=1)
+            model.conv1 = new_conv1
+
+        num_ftrs = model.fc.in_features
+        model.fc = nn.Linear(num_ftrs, num_classes)
+    else:
+        # Note: The original ResNet implementation here is for ResNet-18/34 (BasicBlock).
+        # A proper ResNet-50 would require a Bottleneck block. 
+        # This else block is kept for consistency but for a non-pretrained resnet50, it should be updated.
+        # For this task, we are focusing on pretrained=True.
+        raise NotImplementedError("Non-pretrained ResNet-50 is not implemented with BasicBlock.")
+
+    return model

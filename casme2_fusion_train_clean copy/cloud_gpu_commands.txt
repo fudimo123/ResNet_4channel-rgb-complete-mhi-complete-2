@@ -1,0 +1,56 @@
+CASME2 ADF-Net + EVM + Decalcomanie Cloud GPU Commands
+
+Project directory:
+cd ~/autodl-tmp/ResNet_4channel-rgb-complete-mhi-complete-2/"casme2_fusion_train_clean copy"
+
+==================================================
+1. Offline preprocessing
+==================================================
+
+python preprocess_casme2_aligned_rgb.py --device cuda
+
+python build_casme2_decalcomanie.py
+
+python build_casme2_evm_variants.py --device cuda
+
+python build_casme2_decalcomanie_evm_alpha10.py
+python build_casme2_decalcomanie_evm_classic_butter_o1.py
+
+==================================================
+2. Baseline and decalcomanie training
+==================================================
+
+python run_casme2_fusion_train_se_reprofix.py
+python run_casme2_fusion_train_se_reprofix_decal_lr_possur.py
+python run_casme2_fusion_train_se_reprofix_decal_ratio_ps05_sr1.py
+python run_casme2_fusion_train_se_reprofix_decal_possur_rand1.py
+
+==================================================
+3. EVM variant training
+==================================================
+
+python run_casme2_fusion_train_se_reprofix_evm_alpha6.py
+python run_casme2_fusion_train_se_reprofix_evm_alpha10.py
+python run_casme2_fusion_train_se_reprofix_evm_alpha12.py
+python run_casme2_fusion_train_se_reprofix_evm_fh25.py
+python run_casme2_fusion_train_se_reprofix_evm_fh35.py
+python run_casme2_fusion_train_se_reprofix_evm_fh40.py
+python run_casme2_fusion_train_se_reprofix_evm_pyr2.py
+python run_casme2_fusion_train_se_reprofix_evm_alpha10_fh35.py
+python run_casme2_fusion_train_se_reprofix_evm_classic_butter_o1.py
+python run_casme2_fusion_train_se_reprofix_evm_classic_butter_o2.py
+python run_casme2_fusion_train_se_reprofix_evm_classic_fft_ideal.py
+
+==================================================
+4. Joint EVM + decalcomanie training
+==================================================
+
+python run_casme2_fusion_train_se_reprofix_evm_alpha10_decal_ratio_ps05_sr1.py
+python run_casme2_fusion_train_se_reprofix_evm_classic_butter_o1_decal_ratio_ps05_sr1.py
+
+==================================================
+5. Optional nohup examples
+==================================================
+
+nohup python run_casme2_fusion_train_se_reprofix.py > log_baseline.txt 2>&1 &
+nohup python run_casme2_fusion_train_se_reprofix_evm_alpha10.py > log_evm_alpha10.txt 2>&1 &

@@ -1,0 +1,59 @@
+{
+    "RESULT_DIR": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\casme2_fusion_train2_7class\\fusion_result_spp_transfer_7class_struct_v1",
+    "NUM_EPOCHS": 80,
+    "BATCH_SIZE": 16,
+    "LEARNING_RATE": 0.0005,
+    "WEIGHT_DECAY": 0.0001,
+    "WARMUP_EPOCHS": 10,
+    "CLIP_GRAD_NORM": 1.0,
+    "MODEL": "Late Fusion ResNet-18 + SPP + Gated MLP Head (StructV1)",
+    "rgb_train_transform": {
+        "Resize": {
+            "size": [
+                224,
+                224
+            ]
+        },
+        "RandomRotation": {
+            "degrees": 3
+        },
+        "ToTensor": {},
+        "Normalize": {
+            "mean": [
+                0.485,
+                0.456,
+                0.406
+            ],
+            "std": [
+                0.229,
+                0.224,
+                0.225
+            ]
+        }
+    },
+    "dynamic_train_transform": {
+        "Resize": {
+            "size": [
+                224,
+                224
+            ]
+        },
+        "RandomRotation": {
+            "degrees": 3
+        },
+        "ToTensor": {},
+        "Normalize": {
+            "mean": [
+                0.485,
+                0.456,
+                0.406
+            ],
+            "std": [
+                0.229,
+                0.224,
+                0.225
+            ]
+        }
+    },
+    "fusion_architecture": "Late fusion with gating; 1024\u2192512\u21927 head; UAR early stop; fixed alpha; logit adjustment"
+}

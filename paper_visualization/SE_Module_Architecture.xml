@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="Electron" modified="2023-10-27T00:00:00.000Z" agent="Mozilla/5.0" version="21.2.8" type="device">
+  <diagram id="se_module" name="SE Module">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ========================================== -->
+        <!-- 1. Input: Fused Feature -->
+        <!-- ========================================== -->
+        <mxCell id="input_feat" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#d5e8d4;strokeColor=#82b366;size=10;" vertex="1" parent="1">
+          <mxGeometry x="60" y="160" width="30" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="text_input" value="Fused Feature&lt;br&gt;$$U \in \mathbb{R}^{1024}$$" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="10" y="300" width="140" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- Main Top Horizontal Line -->
+        <!-- ========================================== -->
+        <mxCell id="main_line" style="edgeStyle=straightEdgeStyle;rounded=0;html=1;strokeWidth=1.5;endArrow=classic;strokeColor=#000000;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="90" y="220" as="sourcePoint" />
+            <mxPoint x="800" y="220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- Branch Down (Squeeze) -->
+        <!-- ========================================== -->
+        <mxCell id="branch_down" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;endArrow=classic;strokeColor=#000000;curved=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="160" y="220" as="sourcePoint" />
+            <mxPoint x="230" y="440" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="160" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Excitation Label -->
+        <mxCell id="text_excitation" value="&lt;b&gt;Excitation&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#8a5a44;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="340" y="330" width="100" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- FC (Reduce) -->
+        <!-- ========================================== -->
+        <mxCell id="fc_reduce" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#ffe6cc;strokeColor=#d79b00;size=10;" vertex="1" parent="1">
+          <mxGeometry x="230" y="415" width="30" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="text_reduce" value="FC (Reduce)&lt;br&gt;$$W_1$$" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="195" y="480" width="100" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: FC Reduce -> ReLU -->
+        <mxCell id="arr_r_relu" style="edgeStyle=straightEdgeStyle;rounded=0;html=1;strokeWidth=1.5;endArrow=classic;strokeColor=#000000;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="260" y="440" as="sourcePoint" /><mxPoint x="320" y="440" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- ReLU -->
+        <!-- ========================================== -->
+        <mxCell id="relu_circle" value="$$\delta$$" style="shape=ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#e6e6fa;strokeColor=#9999ff;fontColor=#000000;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="320" y="415" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="text_relu" value="ReLU" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="315" y="475" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: ReLU -> FC Expand -->
+        <mxCell id="arr_relu_e" style="edgeStyle=straightEdgeStyle;rounded=0;html=1;strokeWidth=1.5;endArrow=classic;strokeColor=#000000;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="370" y="440" as="sourcePoint" /><mxPoint x="430" y="440" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- FC (Expand) -->
+        <!-- ========================================== -->
+        <mxCell id="fc_expand" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#ffe6cc;strokeColor=#d79b00;size=10;" vertex="1" parent="1">
+          <mxGeometry x="430" y="380" width="30" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="text_expand" value="FC (Expand)&lt;br&gt;$$W_2$$" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="395" y="520" width="100" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: FC Expand -> Sigmoid -->
+        <mxCell id="arr_e_sig" style="edgeStyle=straightEdgeStyle;rounded=0;html=1;strokeWidth=1.5;endArrow=classic;strokeColor=#000000;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="460" y="440" as="sourcePoint" /><mxPoint x="520" y="440" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- Sigmoid -->
+        <!-- ========================================== -->
+        <mxCell id="sigmoid_circle" value="$$\sigma$$" style="shape=ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#e6e6fa;strokeColor=#9999ff;fontColor=#000000;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="520" y="415" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="text_sigmoid" value="Sigmoid" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="515" y="475" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: Sigmoid -> Weights -->
+        <mxCell id="arr_sig_w" style="edgeStyle=straightEdgeStyle;rounded=0;html=1;strokeWidth=1.5;endArrow=classic;strokeColor=#000000;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="570" y="440" as="sourcePoint" /><mxPoint x="640" y="440" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- Weights Box -->
+        <!-- ========================================== -->
+        <mxCell id="weights_box" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#fff2cc;strokeColor=#d6b656;size=10;" vertex="1" parent="1">
+          <mxGeometry x="640" y="380" width="30" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="text_weights" value="Weights&lt;br&gt;$$w$$" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="605" y="520" width="100" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- Arrow UP: Weights -> Reweight (Multiply) -->
+        <!-- ========================================== -->
+        <mxCell id="arr_w_up" style="edgeStyle=straightEdgeStyle;rounded=0;html=1;strokeWidth=1.5;endArrow=classic;strokeColor=#000000;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="655" y="380" as="sourcePoint" />
+            <mxPoint x="655" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- Reweight Node (Multiply) -->
+        <!-- ========================================== -->
+        <mxCell id="node_multiply" value="$$\times$$" style="shape=ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#999999;fontColor=#000000;fontSize=24;" vertex="1" parent="1">
+          <mxGeometry x="635" y="200" width="40" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="text_reweight" value="&lt;b&gt;Reweight&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=bottom;whiteSpace=wrap;rounded=0;fontColor=#000099;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="605" y="160" width="100" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ========================================== -->
+        <!-- 2. Output: Refined Feature -->
+        <!-- ========================================== -->
+        <mxCell id="arr_out" style="edgeStyle=straightEdgeStyle;rounded=0;html=1;strokeWidth=1.5;endArrow=classic;strokeColor=#000000;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="675" y="220" as="sourcePoint" />
+            <mxPoint x="830" y="220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="output_feat" value="" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#d5e8d4;strokeColor=#82b366;size=10;" vertex="1" parent="1">
+          <mxGeometry x="830" y="160" width="30" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="text_output" value="Refined Feature&lt;br&gt;$$U_{refined}$$" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="780" y="300" width="130" height="40" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

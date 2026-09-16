@@ -1,0 +1,10 @@
+{
+  "raw_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\data\\SMIC2",
+  "xlsx_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\data\\SMIC2\\SMIC_HS_E_spotting.xlsx",
+  "output_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\smic_fusion_train_clean copy\\smic_static_decalcomanie",
+  "target_frames": 16,
+  "total_sequences": 151,
+  "done": 49,
+  "skipped": 102,
+  "failed": 0
+}

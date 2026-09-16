@@ -1,0 +1,9 @@
+{
+  "raw_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\data\\SMIC2",
+  "xlsx_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\data\\SMIC2\\SMIC_HS_E_spotting.xlsx",
+  "output_rgb_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\smic_fusion_train_clean copy\\smic_aligned_rgb_fullstd",
+  "output_dyn_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\smic_fusion_train_clean copy\\smic_dynamic_data_fullstd",
+  "done": 151,
+  "skipped": 0,
+  "failed": 0
+}

@@ -1,0 +1,26 @@
+{
+    "DATA_DIR": "/root/autodl-tmp/ResNet_4channel-rgb-complete-mhi-complete-2/data/DSME_pic",
+    "RESULT_DIR": "result_dsme_rgb_resnet18",
+    "NUM_EPOCHS": 60,
+    "BATCH_SIZE": 16,
+    "LEARNING_RATE": 0.0005,
+    "WEIGHT_DECAY": 0.0001,
+    "WARMUP_EPOCHS": 8,
+    "CLIP_GRAD_NORM": 1.0,
+    "MODEL": "ResNet-18 (Pure RGB)",
+    "EMOTION_MAP": {
+        "happiness": 0,
+        "disgust": 1,
+        "fear": 1,
+        "sadness": 1,
+        "repression": 1,
+        "anger": 1,
+        "surprise": 2,
+        "other": -1
+    },
+    "CLASS_NAMES": [
+        "positive",
+        "negative",
+        "surprise"
+    ]
+}

@@ -1,0 +1,8 @@
+{
+  "output_dynamic_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\casme2_single_dynamic_backbone_compare\\casme2_dynamic_images_offline",
+  "manifest_file": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\casme2_single_dynamic_backbone_compare\\casme2_single_dynamic_manifest.csv",
+  "done": 156,
+  "skipped": 0,
+  "failed": 0,
+  "total_manifest_rows": 156
+}

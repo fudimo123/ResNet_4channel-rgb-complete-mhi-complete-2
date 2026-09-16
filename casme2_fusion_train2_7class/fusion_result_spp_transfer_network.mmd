@@ -1,0 +1,38 @@
+graph LR
+  subgraph RGB_分支
+    A[输入 RGB 3x224x224]
+    A --> B[Stem: Conv7x7 s2 + BN + ReLU + MaxPool]
+    B --> C[layer1: 2x BasicBlock]
+    C --> D[layer2: 2x BasicBlock stride 2]
+    D --> E[layer3: 2x BasicBlock stride 2]
+    E --> F[layer4: 2x BasicBlock stride 2, 输出512通道]
+    F --> G[SPP: 自适应池化 levels=1,2,4 使用max]
+    G --> H[展平 concat]
+    H --> I[Linear -> 512 + ReLU]
+  end
+
+  subgraph 动态成像_分支
+    A2[输入 动态图 3x224x224]
+    A2 --> B2[Stem: Conv7x7 s2 + BN + ReLU + MaxPool]
+    B2 --> C2[layer1: 2x BasicBlock]
+    C2 --> D2[layer2: 2x BasicBlock stride 2]
+    D2 --> E2[layer3: 2x BasicBlock stride 2]
+    E2 --> F2[layer4: 2x BasicBlock stride 2, 输出512通道]
+    F2 --> G2[SPP: 自适应池化 levels=1,2,4 使用max]
+    G2 --> H2[展平 concat]
+    H2 --> I2[Linear -> 512 + ReLU]
+  end
+
+  I --> K[特征拼接 -> 1024维]
+  I2 --> K
+
+  K --> L[Dropout p=0.5]
+  L --> M[FC 1024 -> 3类]
+  M --> N[分类Logits]
+
+  subgraph 备注
+    R1[骨干: torchvision ResNet18 使用 ImageNet 预训练]
+    R2[迁移学习: 加载 JAFFE 预训练权重到两分支骨干 strict False]
+    R3[SPP输出维度: 512 * 1^2 + 2^2 + 4^2 = 512 * 21]
+    R4[分支输出: 线性映射至512维]
+  end

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微表情智能识别平台 | Micro-Expression AI</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent-color: #38bdf8;
+            --text-color: #e2e8f0;
+            --success-color: #4ade80;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 40%);
+            color: var(--text-color);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-weight: 300;
+            letter-spacing: 2px;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            width: 90%;
+            max-width: 1200px;
+            height: 70vh;
+        }
+
+        .video-box {
+            flex: 2;
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
+            top: 0;
+            animation: scan 3s infinite linear;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+
+        .panel-box {
+            flex: 1;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .status-header {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .result-display {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .model-result-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 18px 16px;
+            margin-bottom: auto;
+        }
+
+        .model-result-title {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .emotion-label {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            margin: 10px 0;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+        }
+
+        .confidence-label {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+
+        .bar-container {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 8px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-color), var(--success-color));
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        .data-grid {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .data-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .data-title {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .data-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Micro-Expression Recognition System</h1>
+    </header>
+
+    <div class="main-container">
+        <div class="video-box">
+            <div class="scan-line"></div>
+            <img src="{{ url_for('video_feed') }}" alt="Camera Feed">
+        </div>
+
+        <div class="panel-box">
+            <div>
+                <div class="status-header">Real-time Analysis</div>
+
+                <div class="result-display">
+                    <div style="font-size: 1rem; color: #94a3b8;">Recognition Result</div>
+                </div>
+
+                <div class="model-result-card">
+                    <div class="model-result-title">Our Network</div>
+                    <div class="emotion-label" id="emotion-main">Analyze...</div>
+                    <div class="confidence-label">Confidence: <span id="conf-main">0</span>%</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" id="conf-bar-main"></div>
+                    </div>
+                </div>
+
+                <div class="data-grid">
+                    <div class="data-item">
+                        <div class="data-title">Latency</div>
+                        <div class="data-value">24 ms</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-title">Model</div>
+                        <div class="data-value">ADF-Net</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-title">Mode</div>
+                        <div class="data-value">Real-Time</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-title">Status</div>
+                        <div class="data-value" id="status-text" style="color: #4ade80;">Active</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="font-size: 0.8rem; color: #64748b; text-align: center;">
+                Powered by PyTorch & Flask
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Intelligent Vision Lab. All rights reserved.
+    </footer>
+
+    <script>
+        function getEmotionColor(label) {
+            if (label === "Positive") return "#4ade80";
+            if (label === "Negative") return "#ef4444";
+            if (label === "Surprise") return "#facc15";
+            if (label === "No Face") return "#94a3b8";
+            return "#fff";
+        }
+
+        function updateMainCard(result) {
+            const emotionText = document.getElementById("emotion-main");
+            const confText = document.getElementById("conf-main");
+            const confBar = document.getElementById("conf-bar-main");
+            emotionText.innerText = result.label;
+            emotionText.style.color = getEmotionColor(result.label);
+            confText.innerText = result.confidence;
+            confBar.style.width = result.confidence + "%";
+        }
+
+        function updateResult() {
+            fetch("/get_result")
+                .then(response => response.json())
+                .then(data => {
+                    updateMainCard(data.models.dsme);
+
+                    const statusText = document.getElementById("status-text");
+                    if (data.status === "no_face") {
+                        statusText.innerText = "No Face";
+                        statusText.style.color = "#94a3b8";
+                    } else {
+                        const faceCount = data.face_count ?? 0;
+                        statusText.innerText = `Active (${faceCount} face${faceCount === 1 ? "" : "s"})`;
+                        statusText.style.color = "#4ade80";
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        setInterval(updateResult, 200);
+    </script>
+</body>
+</html>

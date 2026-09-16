@@ -1,0 +1,206 @@
+<mxfile host="Electron" modified="2024-03-27T10:00:00.000Z" agent="Mozilla/5.0" version="24.0.4" type="device">
+  <diagram id="cbam_diagram" name="CBAM Module">
+    <mxGraphModel dx="1000" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Input Feature Map -->
+        <mxCell id="input" value="Input Feature Map&#10;(C=512, H=7, W=7)" style="shape=box3d;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=middle;align=center;" vertex="1" parent="1">
+          <mxGeometry x="50" y="200" width="120" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Channel Attention Module Group -->
+        <mxCell id="cam_group" value="Channel Attention Module (CAM)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontStyle=1;startSize=23;dashed=1;dashPattern=1 2;" vertex="1" parent="1">
+          <mxGeometry x="220" y="80" width="350" height="320" as="geometry" />
+        </mxCell>
+        
+        <!-- MaxPool & AvgPool in CAM -->
+        <mxCell id="cam_maxpool" value="Global&#10;MaxPool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="cam_group">
+          <mxGeometry x="30" y="50" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cam_avgpool" value="Global&#10;AvgPool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="cam_group">
+          <mxGeometry x="30" y="150" width="80" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- MLP in CAM -->
+        <mxCell id="cam_mlp" value="Shared MLP&#10;(r=16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="cam_group">
+          <mxGeometry x="150" y="100" width="80" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Add in CAM -->
+        <mxCell id="cam_add" value="+" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="cam_group">
+          <mxGeometry x="260" y="115" width="30" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Sigmoid in CAM -->
+        <mxCell id="cam_sigmoid" value="Sigmoid" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="cam_group">
+          <mxGeometry x="235" y="220" width="80" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Edges in CAM -->
+        <mxCell id="edge_in_to_max" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="input" target="cam_maxpool">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="240" />
+              <mxPoint x="190" y="150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_in_to_avg" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="input" target="cam_avgpool">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="240" />
+              <mxPoint x="190" y="250" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="edge_max_to_mlp" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="cam_group" source="cam_maxpool" target="cam_mlp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_avg_to_mlp" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="cam_group" source="cam_avgpool" target="cam_mlp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="edge_mlp_to_add_1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="cam_group" source="cam_mlp" target="cam_add">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="245" y="120" />
+              <mxPoint x="245" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_mlp_to_add_2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="cam_group" source="cam_mlp" target="cam_add">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="245" y="140" />
+              <mxPoint x="245" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="edge_add_to_sig" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="cam_group" source="cam_add" target="cam_sigmoid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Channel Refined Feature -->
+        <mxCell id="mul_cam" value="X" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="610" y="225" width="30" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="edge_sig_to_mul" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="cam_sigmoid" target="mul_cam">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_in_to_mul" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="input" target="mul_cam">
+          <mxGeometry relative="1" as="geometry">
+             <Array as="points">
+              <mxPoint x="190" y="240" />
+              <mxPoint x="190" y="430" />
+              <mxPoint x="580" y="430" />
+              <mxPoint x="580" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="mid_feature" value="Channel-Refined&#10;Feature" style="shape=box3d;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=middle;align=center;" vertex="1" parent="1">
+          <mxGeometry x="680" y="200" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_mul_to_mid" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="mul_cam" target="mid_feature">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Spatial Attention Module Group -->
+        <mxCell id="sam_group" value="Spatial Attention Module (SAM)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontStyle=1;startSize=23;dashed=1;dashPattern=1 2;" vertex="1" parent="1">
+          <mxGeometry x="850" y="80" width="320" height="320" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sam_maxpool" value="Channel&#10;MaxPool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="sam_group">
+          <mxGeometry x="30" y="50" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="sam_avgpool" value="Channel&#10;AvgPool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="sam_group">
+          <mxGeometry x="30" y="150" width="80" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sam_concat" value="Concat" style="shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fixedSize=1;rotation=90;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="sam_group">
+          <mxGeometry x="130" y="100" width="60" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sam_conv" value="Conv2d&#10;(7x7)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="sam_group">
+          <mxGeometry x="210" y="100" width="80" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="sam_sigmoid" value="Sigmoid" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="sam_group">
+          <mxGeometry x="210" y="220" width="80" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Edges in SAM -->
+        <mxCell id="edge_mid_to_sam_max" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="mid_feature" target="sam_maxpool">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="820" y="240" />
+              <mxPoint x="820" y="150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_mid_to_sam_avg" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="mid_feature" target="sam_avgpool">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="820" y="240" />
+              <mxPoint x="820" y="250" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="edge_smax_to_cat" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="sam_group" source="sam_maxpool" target="sam_concat">
+          <mxGeometry relative="1" as="geometry">
+             <Array as="points">
+              <mxPoint x="160" y="70" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_savg_to_cat" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="sam_group" source="sam_avgpool" target="sam_concat">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="160" y="170" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="edge_cat_to_conv" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="sam_group" source="sam_concat" target="sam_conv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_conv_to_sig" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="sam_group" source="sam_conv" target="sam_sigmoid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Final Output -->
+        <mxCell id="mul_sam" value="X" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="225" width="30" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="edge_ssig_to_mul" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="sam_sigmoid" target="mul_sam">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_mid_to_mul" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="mid_feature" target="mul_sam">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="820" y="240" />
+              <mxPoint x="820" y="430" />
+              <mxPoint x="1190" y="430" />
+              <mxPoint x="1190" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="output" value="Refined Feature Map&#10;(C=512, H=7, W=7)&#10;Ready for Grid Pooling" style="shape=box3d;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=middle;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="200" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_mul_to_out" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="mul_sam" target="output">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

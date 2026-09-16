@@ -1,0 +1,25 @@
+{
+  "sample_name": "sub01_EP02_01f_positive",
+  "subject_num": 1,
+  "subject_id": "sub01",
+  "sequence": "EP02_01f",
+  "raw_emotion": "happiness",
+  "mapped_emotion": "positive",
+  "predicted_class": "positive",
+  "probabilities": {
+    "positive": 0.7027393579483032,
+    "negative": 0.277216374874115,
+    "surprise": 0.020044300705194473
+  },
+  "rgb_frame_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\data\\CASME2_RAW_selected\\CASME2_RAW_selected\\sub01\\EP02_01f\\img59.jpg",
+  "dynamic_image_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\casme2_fusion_train2_3class copy\\dynamic_data\\sub01\\s1_EP02_01f.jpg",
+  "rgb_input_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\grad-cam-lunwen\\outputs\\sub01_EP02_01f_positive\\rgb_input.png",
+  "dynamic_input_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\grad-cam-lunwen\\outputs\\sub01_EP02_01f_positive\\dynamic_input.png",
+  "methods": {
+    "gradcampp": {
+      "single_branch_rgb_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\grad-cam-lunwen\\outputs\\sub01_EP02_01f_positive\\single_branch_rgb_gradcampp.png",
+      "single_branch_dynamic_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\grad-cam-lunwen\\outputs\\sub01_EP02_01f_positive\\single_branch_dynamic_gradcampp.png",
+      "dual_branch_panel_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\grad-cam-lunwen\\outputs\\sub01_EP02_01f_positive\\dual_branch_gradcampp_panel.png"
+    }
+  }
+}

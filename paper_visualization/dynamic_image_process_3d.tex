@@ -1,0 +1,106 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usetikzlibrary{positioning, arrows.meta, calc, shadows.blur, shapes.geometric, 3d}
+
+\begin{document}
+
+% --- 配色 ---
+\definecolor{color_proc}{RGB}{100, 149, 237}   % 蓝 - 处理
+\definecolor{color_math}{RGB}{255, 179, 71}    % 橙 - 数学运算
+\definecolor{color_frame}{RGB}{50, 50, 50}     % 深灰 - 边框
+
+\begin{tikzpicture}[
+    node distance=1.5cm,
+    % 立体处理块
+    block/.style={
+        rectangle,
+        draw=black!60,
+        thick,
+        minimum width=2.2cm,
+        minimum height=1.2cm,
+        align=center,
+        font=\small\sffamily,
+        blur shadow={shadow blur steps=5}
+    },
+    arrow/.style={->, >=latex, thick, color=black!70}
+]
+
+    % --- 宏：绘制立体处理块 (带侧面) ---
+    \newcommand{\DrawBlock}[5]{ % #1: name, #2: x, #3: y, #4: color, #5: text
+        % 侧面
+        \filldraw[fill=#4!80, draw=black!60] (#2+1.1, #3-0.6) -- ++(0.3, 0.2) -- ++(0, 1.2) -- (#2+1.1, #3+0.6) -- cycle;
+        % 顶面
+        \filldraw[fill=#4!60, draw=black!60] (#2-1.1, #3+0.6) -- ++(0.3, 0.2) -- ++(2.2, 0) -- (#2+1.1, #3+0.6) -- cycle;
+        % 正面
+        \node[block, fill=#4] (#1) at (#2,#3) {#5};
+    }
+
+    % --- 宏：绘制图片节点 (带边框和阴影) ---
+    \newcommand{\DrawImage}[4]{ % #1: name, #2: x, #3: y, #4: filename
+        \node[inner sep=0pt, drop shadow] (#1) at (#2,#3) {
+            \includegraphics[width=1.8cm, height=1.8cm]{#4}
+        };
+        \draw[color_frame, thick] (#1.south west) rectangle (#1.north east);
+    }
+
+    % --- 1. 输入序列 (Image Sequence) ---
+    % 绘制堆叠效果：后两张稍微偏移
+    \node[inner sep=0pt, opacity=0.6] (seq3) at (0.4, 0.4) {
+        \includegraphics[width=1.8cm, height=1.8cm]{seq_3.jpg}
+    };
+    \draw[color_frame, thick, opacity=0.6] (seq3.south west) rectangle (seq3.north east);
+
+    \node[inner sep=0pt, opacity=0.8] (seq2) at (0.2, 0.2) {
+        \includegraphics[width=1.8cm, height=1.8cm]{seq_2.jpg}
+    };
+    \draw[color_frame, thick, opacity=0.8] (seq2.south west) rectangle (seq2.north east);
+
+    \node[inner sep=0pt, drop shadow] (seq1) at (0, 0) {
+        \includegraphics[width=1.8cm, height=1.8cm]{seq_1.jpg}
+    };
+    \draw[color_frame, thick] (seq1.south west) rectangle (seq1.north east);
+    
+    % 标注
+    \node[below=0.2cm of seq1, font=\small] {Image Sequence};
+    \node[below=0.6cm of seq1, font=\scriptsize] {$I_1, I_2, \dots, I_N$};
+
+    % --- 2. 权重计算 (Calculate Weights) ---
+    \DrawBlock{weights}{5}{0}{color_proc}{Calculate\\Weights $C_t$}
+    
+    % 连线
+    \draw[arrow] (seq1) -- (weights);
+
+    % --- 3. 累加 (Accumulate) ---
+    \node[circle, draw=black!70, thick, fill=color_math!20, minimum size=1.2cm, right=1.5cm of weights, drop shadow] (sum) {$\sum$};
+    \node[below=0.2cm of sum, font=\scriptsize, align=center] {Weighted Sum\\$D = \sum C_t I_t$};
+    
+    % 连线
+    \draw[arrow] (weights) -- (sum);
+
+    % --- 4. 归一化 (Normalize) ---
+    \DrawBlock{norm}{11}{0}{color_proc}{Normalize\\$0 \sim 255$}
+    
+    % 连线
+    \draw[arrow] (sum) -- (norm);
+
+    % --- 5. 输出动态图 (Dynamic Image) ---
+    \node[inner sep=0pt, drop shadow, right=1.5cm of norm] (output) {
+        \includegraphics[width=1.8cm, height=1.8cm]{dynamic_input.jpg}
+    };
+    \draw[color_frame, thick] (output.south west) rectangle (output.north east);
+    
+    % 标注
+    \node[below=0.2cm of output, font=\small] {Dynamic Image};
+
+    % 连线
+    \draw[arrow] (norm) -- (output);
+
+    % --- 公式标注 ---
+    \node[above=0.8cm of weights, font=\scriptsize, color=black!60, align=center] (formula) {
+        $C_t = \sum_{j=t}^{N} \frac{2(j+1) - N - 1}{j+1}$
+    };
+    \draw[dashed, thin, black!30] (weights) -- (formula);
+
+\end{tikzpicture}
+\end{document}

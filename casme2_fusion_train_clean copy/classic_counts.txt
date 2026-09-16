@@ -1,0 +1,3 @@
+casme2_aligned_rgb_evm_classic_butter_o1=156
+casme2_aligned_rgb_evm_classic_butter_o2=156
+casme2_aligned_rgb_evm_classic_fft_ideal=46

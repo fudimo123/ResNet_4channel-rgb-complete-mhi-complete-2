@@ -1,0 +1,17 @@
+{
+  "simple": [
+    "alpha6",
+    "alpha10",
+    "alpha12",
+    "fh25",
+    "fh35",
+    "fh40",
+    "pyr2",
+    "alpha10_fh35"
+  ],
+  "classic": [
+    "classic_butter_o1",
+    "classic_butter_o2",
+    "classic_fft_ideal"
+  ]
+}

@@ -1,0 +1,116 @@
+[
+  {
+    "model_key": "baseline_s",
+    "display_name": "Baseline-S",
+    "metrics_path": "/root/autodl-tmp/ResNet_4channel-rgb-complete-mhi-complete-2/casme_rgb_train/rgb_result/result9/final_metrics.txt",
+    "branch_type": "single_rgb",
+    "feature_strategy": "ResNet18 + GAP",
+    "fusion_strategy": "/",
+    "pretraining": "ImageNet",
+    "input_shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "total_params": 11178051,
+    "trainable_params": 11178051,
+    "flops": 1823523328,
+    "flops_backend": "thop"
+  },
+  {
+    "model_key": "baseline_d",
+    "display_name": "Baseline-D",
+    "metrics_path": "/root/autodl-tmp/ResNet_4channel-rgb-complete-mhi-complete-2/casme_dynamic_train/result1/final_metrics.txt",
+    "branch_type": "single_dynamic",
+    "feature_strategy": "ResNet18 + GAP",
+    "fusion_strategy": "/",
+    "pretraining": "ImageNet",
+    "input_shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "total_params": 11178051,
+    "trainable_params": 11178051,
+    "flops": 1823523328,
+    "flops_backend": "thop"
+  },
+  {
+    "model_key": "model_a",
+    "display_name": "Model A",
+    "metrics_path": "/root/autodl-tmp/ResNet_4channel-rgb-complete-mhi-complete-2/casme2_fusion_train2_3class/fusion_result/final_metrics.txt",
+    "branch_type": "dual",
+    "feature_strategy": "RGB ResNet18(GAP) + Dynamic ResNet18(GAP)",
+    "fusion_strategy": "Direct Concat",
+    "pretraining": "ImageNet",
+    "input_shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "total_params": 22356099,
+    "trainable_params": 22356099,
+    "flops": 3647046656,
+    "flops_backend": "thop"
+  },
+  {
+    "model_key": "model_b",
+    "display_name": "Model B",
+    "metrics_path": "/root/autodl-tmp/ResNet_4channel-rgb-complete-mhi-complete-2/casme2_fusion_train2_3class/fusion_result2_spp/final_metrics.txt",
+    "branch_type": "dual",
+    "feature_strategy": "RGB ResNet18(SPP) + Dynamic ResNet18(SPP)",
+    "fusion_strategy": "Direct Concat",
+    "pretraining": "ImageNet",
+    "input_shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "total_params": 33367171,
+    "trainable_params": 33367171,
+    "flops": 3658005504,
+    "flops_backend": "thop"
+  },
+  {
+    "model_key": "model_c",
+    "display_name": "Model C",
+    "metrics_path": "/root/autodl-tmp/ResNet_4channel-rgb-complete-mhi-complete-2/casme2_fusion_train2_3class copy/fusion_result_asym_grid_cbam/final_metrics.txt",
+    "branch_type": "dual",
+    "feature_strategy": "RGB Grid+CBAM + Dynamic SPP",
+    "fusion_strategy": "Direct Concat",
+    "pretraining": "ImageNet",
+    "input_shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "total_params": 28943589,
+    "trainable_params": 28943589,
+    "flops": 3653672130,
+    "flops_backend": "thop"
+  },
+  {
+    "model_key": "adf_net",
+    "display_name": "ADF-Net",
+    "metrics_path": "/root/autodl-tmp/ResNet_4channel-rgb-complete-mhi-complete-2/casme2_fusion_train2_3class copy/fusion_result_asym_se-1/final_metrics.txt",
+    "branch_type": "dual",
+    "feature_strategy": "RGB Grid+CBAM + Dynamic SPP",
+    "fusion_strategy": "SE Fusion",
+    "pretraining": "ImageNet",
+    "input_shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "total_params": 29074661,
+    "trainable_params": 29074661,
+    "flops": 3653803202,
+    "flops_backend": "thop"
+  }
+]

@@ -1,0 +1,119 @@
+// ME_Recognition_Architecture
+digraph {
+	charset="UTF-8" dpi=300 rankdir=TB splines=ortho
+	node [fontname=SimHei fontsize=10 margin=0.2 shape=box style=filled]
+	edge [fontname=SimHei fontsize=9]
+	graph [fontname=SimHei fontsize=16 labelloc=t]
+	label="图标题：基于动态成像与SPP的特征级晚期融合微表情识别网络结构图\n\n"
+	subgraph cluster_rgb {
+		color="#336699" fontcolor="#336699" label="左路分支 (RGB Spatial)" style=dashed
+		rgb_input [label=<
+            <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+            <TR><TD><B>左路输入</B></TD></TR>
+            <TR><TD>RGB 单帧图像</TD></TR>
+            <TR><TD><I>MTCNN 检测与裁剪</I></TD></TR>
+            <TR><TD><FONT COLOR="blue">3×224×224</FONT></TD></TR>
+            </TABLE>> color="#336699" fillcolor="#E6F3FF"]
+		rgb_backbone [label=<
+            <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="#336699">
+            <TR><TD COLSPAN="2"><B>ResNet-18 (截断至 layer4)</B></TD></TR>
+            <TR><TD COLSPAN="2"><I>加载 JAFFE 预训练权重</I></TD></TR>
+            <TR><TD>conv1 → bn1 → relu</TD><TD ALIGN="RIGHT">64×112×112</TD></TR>
+            <TR><TD>maxpool</TD><TD ALIGN="RIGHT">64×56×56</TD></TR>
+            <TR><TD>layer1 (BasicBlock)</TD><TD ALIGN="RIGHT">64×56×56</TD></TR>
+            <TR><TD>layer2 (BasicBlock)</TD><TD ALIGN="RIGHT">128×28×28</TD></TR>
+            <TR><TD>layer3 (BasicBlock)</TD><TD ALIGN="RIGHT">256×14×14</TD></TR>
+            <TR><TD>layer4 (BasicBlock)</TD><TD ALIGN="RIGHT"><B>512×7×7</B></TD></TR>
+            </TABLE>> fillcolor=white shape=plaintext]
+		rgb_spp [label=<
+            <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+            <TR><TD><B>SPP (空间金字塔池化)</B></TD></TR>
+            <TR><TD>金字塔等级: (1, 2, 4)</TD></TR>
+            <TR><TD>计算: 512×(1²+2²+4²)</TD></TR>
+            <TR><TD><FONT COLOR="blue">Out: 10752</FONT></TD></TR>
+            </TABLE>> color="#336699" fillcolor="#E6F3FF"]
+		rgb_proj [label=<
+            <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+            <TR><TD><B>线性投影模块</B></TD></TR>
+            <TR><TD>Linear (10752 → 512)</TD></TR>
+            <TR><TD><FONT COLOR="blue">rgb_feat (512)</FONT></TD></TR>
+            </TABLE>> color="#336699" fillcolor="#E6F3FF"]
+		rgb_input -> rgb_backbone
+		rgb_backbone -> rgb_spp
+		rgb_spp -> rgb_proj
+	}
+	subgraph cluster_dyn {
+		color="#CC6600" fontcolor="#CC6600" label="右路分支 (Dynamic Temporal)" style=dashed
+		dyn_input [label=<
+            <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+            <TR><TD><B>右路输入</B></TD></TR>
+            <TR><TD>动态成像 (帧序列加权)</TD></TR>
+            <TR><TD><I>MTCNN 检测与裁剪</I></TD></TR>
+            <TR><TD><FONT COLOR="red">3×224×224</FONT></TD></TR>
+            </TABLE>> color="#CC6600" fillcolor="#FFF0E6"]
+		dyn_backbone [label=<
+            <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="#CC6600">
+            <TR><TD COLSPAN="2"><B>ResNet-18 (截断至 layer4)</B></TD></TR>
+            <TR><TD COLSPAN="2"><I>加载 JAFFE 预训练权重</I></TD></TR>
+            <TR><TD>conv1 → bn1 → relu</TD><TD ALIGN="RIGHT">64×112×112</TD></TR>
+            <TR><TD>maxpool</TD><TD ALIGN="RIGHT">64×56×56</TD></TR>
+            <TR><TD>layer1 (BasicBlock)</TD><TD ALIGN="RIGHT">64×56×56</TD></TR>
+            <TR><TD>layer2 (BasicBlock)</TD><TD ALIGN="RIGHT">128×28×28</TD></TR>
+            <TR><TD>layer3 (BasicBlock)</TD><TD ALIGN="RIGHT">256×14×14</TD></TR>
+            <TR><TD>layer4 (BasicBlock)</TD><TD ALIGN="RIGHT"><B>512×7×7</B></TD></TR>
+            </TABLE>> fillcolor=white shape=plaintext]
+		dyn_spp [label=<
+            <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+            <TR><TD><B>SPP (空间金字塔池化)</B></TD></TR>
+            <TR><TD>金字塔等级: (1, 2, 4)</TD></TR>
+            <TR><TD>计算: 512×(1²+2²+4²)</TD></TR>
+            <TR><TD><FONT COLOR="red">Out: 10752</FONT></TD></TR>
+            </TABLE>> color="#CC6600" fillcolor="#FFF0E6"]
+		dyn_proj [label=<
+            <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+            <TR><TD><B>线性投影模块</B></TD></TR>
+            <TR><TD>Linear (10752 → 512)</TD></TR>
+            <TR><TD><FONT COLOR="red">dyn_feat (512)</FONT></TD></TR>
+            </TABLE>> color="#CC6600" fillcolor="#FFF0E6"]
+		dyn_input -> dyn_backbone
+		dyn_backbone -> dyn_spp
+		dyn_spp -> dyn_proj
+	}
+	concat [label=<
+            <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+            <TR><TD><B>特征级晚期融合 (Concat)</B></TD></TR>
+            <TR><TD>Input: [rgb_feat, dyn_feat]</TD></TR>
+            <TR><TD>512 + 512</TD></TR>
+            <TR><TD><B>fused (1024)</B></TD></TR>
+            </TABLE>> fillcolor="#F0F0F0" shape=octagon style=filled]
+	head [label=<
+            <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+            <TR><TD><B>分类头 (Classification Head)</B></TD></TR>
+            <TR><TD>Dropout (p=0.5)</TD></TR>
+            <TR><TD>Fully Connected (1024 → 3)</TD></TR>
+            </TABLE>> fillcolor="#E8F6F3"]
+	output [label=<
+            <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+            <TR><TD><B>三分类概率输出</B></TD></TR>
+            <TR><TD ALIGN="LEFT">1. Positive (Happiness)</TD></TR>
+            <TR><TD ALIGN="LEFT">2. Negative (Disgust/Repression/Sadness/Fear)</TD></TR>
+            <TR><TD ALIGN="LEFT">3. Surprise (Surprise)</TD></TR>
+            </TABLE>> fillcolor="#FFFFCC" shape=note]
+	subgraph cluster_fusion {
+		style=invis
+	}
+	rgb_proj -> concat
+	dyn_proj -> concat
+	concat -> head
+	head -> output
+	notes [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" BGCOLOR="#F9F9F9">
+    <TR><TD ALIGN="LEFT"><B>训练策略与参数配置：</B></TD></TR>
+    <TR><TD ALIGN="LEFT">• <B>Loss:</B> FocalLoss (gamma=2) 动态类权重</TD></TR>
+    <TR><TD ALIGN="LEFT">• <B>Optimizer:</B> AdamW (lr=5e-4, weight_decay=1e-4)</TD></TR>
+    <TR><TD ALIGN="LEFT">• <B>Scheduler:</B> Warmup(8) + CosineAnnealing</TD></TR>
+    <TR><TD ALIGN="LEFT">• <B>Control:</B> clip_grad_norm=1.0, EarlyStopping(p=30)</TD></TR>
+    <TR><TD ALIGN="LEFT">• <B>Validation:</B> LOSO (Leave-One-Subject-Out)</TD></TR>
+    </TABLE>> shape=component width=3]
+	output -> notes [style=invis]
+}

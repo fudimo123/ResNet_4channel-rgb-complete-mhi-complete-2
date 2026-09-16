@@ -1,0 +1,283 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, 3d, calc, shapes, backgrounds, fit, shadows, decorations.pathreplacing}
+
+% Define Colors
+\definecolor{techblue}{RGB}{50, 100, 200}
+\definecolor{lightblue}{RGB}{180, 210, 255}
+\definecolor{warmorange}{RGB}{255, 140, 50}
+\definecolor{coralred}{RGB}{255, 100, 80}
+\definecolor{fusionpurple}{RGB}{140, 50, 200}
+\definecolor{emeraldgreen}{RGB}{40, 180, 100}
+
+\begin{document}
+\begin{tikzpicture}[
+    x={(1cm,0cm)}, y={(0cm,1cm)}, z={(0.4cm,0.3cm)},
+    font=\sffamily\footnotesize,
+    >=Stealth,
+    node distance=1.5cm
+]
+
+% Styles
+\tikzstyle{imgnode} = [draw=black!30, thick, inner sep=0pt, fill=white, drop shadow]
+\tikzstyle{op} = [circle, draw=black, thick, fill=white, inner sep=0pt, minimum size=0.4cm, font=\large]
+
+% --- MACROS ---
+% Trapezoid: #1=x, #2=y, #3=z, #4=width, #5=h_left, #6=h_right, #7=depth, #8=color, #9=text
+\newcommand{\DrawTrapezoid}[9]{{
+    \coordinate (C) at (#1, #2, #3);
+    \def\w{#4} \def\hl{#5} \def\hr{#6} \def\d{#7} 
+    \colorlet{tempcol}{#8} % Use colorlet to handle color expressions safely
+    % Front Face (z = -d/2)
+    \coordinate (Ftl) at ($(C) + (-\w/2, \hl/2, -\d/2)$);
+    \coordinate (Fbl) at ($(C) + (-\w/2, -\hl/2, -\d/2)$);
+    \coordinate (Ftr) at ($(C) + (\w/2, \hr/2, -\d/2)$);
+    \coordinate (Fbr) at ($(C) + (\w/2, -\hr/2, -\d/2)$);
+    % Back Face (z = d/2)
+    \coordinate (Btl) at ($(C) + (-\w/2, \hl/2, \d/2)$);
+    \coordinate (Bbl) at ($(C) + (-\w/2, -\hl/2, \d/2)$);
+    \coordinate (Btr) at ($(C) + (\w/2, \hr/2, \d/2)$);
+    \coordinate (Bbr) at ($(C) + (\w/2, -\hr/2, \d/2)$);
+    % Draw Right Face
+    \filldraw[fill=tempcol!60!black, draw=tempcol!40!black, thick] (Fbr) -- (Bbr) -- (Btr) -- (Ftr) -- cycle;
+    % Draw Top Face
+    \filldraw[fill=tempcol!80!white, draw=tempcol!40!black, thick] (Ftl) -- (Btl) -- (Btr) -- (Ftr) -- cycle;
+    % Draw Front Face
+    \filldraw[fill=tempcol, draw=tempcol!40!black, thick] (Fbl) -- (Fbr) -- (Ftr) -- (Ftl) -- cycle;
+    \node[align=center, text=white, font=\bfseries] at (C) {#9};
+}}
+
+% Block/Cuboid: #1=x, #2=y, #3=z, #4=w, #5=h, #6=d, #7=color, #8=text, #9=opacity
+\newcommand{\DrawBlock}[9]{{
+    \coordinate (C) at (#1, #2, #3);
+    \def\w{#4} \def\h{#5} \def\d{#6} \def\op{#9}
+    \colorlet{tempcol}{#7} % Use colorlet to handle color expressions safely
+    \coordinate (Ftl) at ($(C) + (-\w/2, \h/2, -\d/2)$);
+    \coordinate (Fbl) at ($(C) + (-\w/2, -\h/2, -\d/2)$);
+    \coordinate (Ftr) at ($(C) + (\w/2, \h/2, -\d/2)$);
+    \coordinate (Fbr) at ($(C) + (\w/2, -\h/2, -\d/2)$);
+    \coordinate (Btl) at ($(C) + (-\w/2, \h/2, \d/2)$);
+    \coordinate (Bbl) at ($(C) + (-\w/2, -\h/2, \d/2)$);
+    \coordinate (Btr) at ($(C) + (\w/2, \h/2, \d/2)$);
+    \coordinate (Bbr) at ($(C) + (\w/2, -\h/2, \d/2)$);
+    \filldraw[fill=tempcol!60!black, draw=tempcol!40!black, opacity=\op] (Fbr) -- (Bbr) -- (Btr) -- (Ftr) -- cycle;
+    \filldraw[fill=tempcol!80!white, draw=tempcol!40!black, opacity=\op] (Ftl) -- (Btl) -- (Btr) -- (Ftr) -- cycle;
+    \filldraw[fill=tempcol, draw=tempcol!40!black, opacity=\op] (Fbl) -- (Fbr) -- (Ftr) -- (Ftl) -- cycle;
+    \node[anchor=north, align=center, yshift=-0.2cm] at ($(C) + (0, -\h/2, -\d/2)$) {#8};
+}}
+
+% =================================================================================
+% PART 1: INPUTS
+% =================================================================================
+
+% --- Top Branch (RGB) ---
+\node[imgnode] (input_rgb) at (0, 5, 0) {
+    \includegraphics[width=2cm, height=2cm]{rgb_input.jpg}
+};
+\node[below=0.2cm of input_rgb, align=center] {Static RGB Frame\\(Apex)};
+
+% --- Bottom Branch (Dynamic) ---
+\node[imgnode] (input_dyn) at (0, -5, 0) {
+    \includegraphics[width=2cm, height=2cm]{dynamic_input.jpg}
+};
+\node[below=0.2cm of input_dyn, align=center] {Dynamic Image\\(Motion)};
+
+
+% =================================================================================
+% PART 2: BACKBONES (ResNet-18)
+% =================================================================================
+
+\draw[->, thick, techblue] (input_rgb) -- (2.0, 5, 0);
+\draw[->, thick, warmorange] (input_dyn) -- (2.0, -5, 0);
+
+% --- RGB Backbone ---
+\DrawTrapezoid{3.5}{5}{0}{3.0}{2.0}{1.0}{1.0}{techblue}{ResNet-18\\Backbone}
+\draw[->, thick, techblue] (5.0, 5, 0) -- (6.0, 5, 0);
+
+% Output Feature Map (RGB)
+\DrawBlock{6.5}{5}{0}{0.8}{1.0}{1.0}{techblue}{512$\times$7$\times$7}{0.9}
+
+
+% --- Dynamic Backbone ---
+\DrawTrapezoid{3.5}{-5}{0}{3.0}{2.0}{1.0}{1.0}{warmorange}{ResNet-18\\Backbone}
+\draw[->, thick, warmorange] (5.0, -5, 0) -- (6.0, -5, 0);
+
+% Output Feature Map (Dynamic)
+\DrawBlock{6.5}{-5}{0}{0.8}{1.0}{1.0}{warmorange}{512$\times$7$\times$7}{0.9}
+
+
+% =================================================================================
+% PART 3: ASYMMETRIC MODULES (Expanded)
+% =================================================================================
+
+% --- TOP: CBAM + Grid Pooling + Projection ---
+
+\draw[->, thick] (7.0, 5, 0) -- (8.0, 5, 0);
+
+% 1. CBAM Channel
+\DrawBlock{8.5}{5}{0}{0.2}{1.0}{1.0}{red}{}{0.9}
+\node[op, scale=0.7] (mul1) at (9.3, 5, 0) {$\otimes$};
+\draw[->, thick] (8.7, 5, 0) -- (mul1);
+
+% 2. CBAM Spatial
+\draw[->, thick] (mul1) -- (10.0, 5, 0);
+% 3D plane for spatial grid
+\begin{scope}[canvas is yz plane at x=10.5]
+    \filldraw[fill=techblue!80!black, draw=black, step=0.25] (-0.5, -0.5) grid (0.5, 0.5);
+\end{scope}
+\node[op, scale=0.7] (mul2) at (11.5, 5, 0) {$\otimes$};
+\draw[->, thick] (10.6, 5, 0) -- (mul2);
+
+% Label CBAM
+\draw[decorate, decoration={brace, amplitude=5pt, mirror}, thick] (8.3, 4.2, 0) -- (11.7, 4.2, 0) node[midway, below=8pt, align=center] {CBAM (Attention)};
+
+% 3. Grid Pooling
+\draw[->, thick] (mul2) -- (13.0, 5, 0);
+
+% 3D Grid Pooling plane (2x2 split)
+\begin{scope}[canvas is yz plane at x=13.5]
+    \filldraw[fill=lightblue!30, draw=techblue, step=0.5] (-0.5, -0.5) grid (0.5, 0.5); % 4 cells
+    \draw[techblue!80!black, very thick] (0, -0.5) -- (0, 0.5);
+    \draw[techblue!80!black, very thick] (-0.5, 0) -- (0.5, 0);
+\end{scope}
+\node[below, align=center] at (13.5, 4.2, 0) {Grid Pooling\\(2$\times$2)};
+
+% Converging arrows
+\coordinate (vec_rgb_start) at (16.0, 5, 0);
+\draw[->, techblue] (13.6, 5.3, 0.3) to[out=0,in=180] (vec_rgb_start);
+\draw[->, techblue] (13.6, 4.7, 0.3) to[out=0,in=180] (vec_rgb_start);
+\draw[->, techblue] (13.6, 5.3, -0.3) to[out=0,in=180] (vec_rgb_start);
+\draw[->, techblue] (13.6, 4.7, -0.3) to[out=0,in=180] (vec_rgb_start);
+
+% 4. 1D Vector RGB (2048 dim)
+\DrawBlock{17.5}{5}{0}{3.0}{0.6}{0.6}{techblue}{Dim: 2048}{0.9}
+
+% 5. Projection (Linear + ReLU)
+\draw[->, thick] (19.0, 5, 0) -- (20.0, 5, 0);
+\DrawBlock{20.5}{5}{0}{1.0}{0.6}{0.6}{white}{Linear\\+ReLU}{1.0}
+\draw[->, thick] (21.0, 5, 0) -- (22.0, 5, 0);
+
+% 6. Projected Vector (512 dim)
+\DrawBlock{23.5}{5}{0}{3.0}{0.4}{0.4}{techblue}{Dim: 512}{0.9}
+
+
+% --- BOTTOM: SPP + Projection ---
+\draw[->, thick] (7.0, -5, 0) -- (8.5, -5, 0);
+
+% SPP Grids (Parallel in Y)
+\begin{scope}[canvas is xz plane at y=-5]
+    % Level 1: 1x1
+    \filldraw[fill=warmorange!40, draw=warmorange!80!black, thick] (9.0, 1.0) rectangle (10.0, 2.0);
+    \node[font=\tiny] at (9.5, 1.5) {1$\times$1};
+    
+    % Level 2: 2x2
+    \filldraw[fill=warmorange!40, draw=warmorange!80!black, thick, step=0.5] (9.0, -0.5) grid (10.0, 0.5);
+    \node[font=\tiny] at (9.5, 0) {2$\times$2};
+    
+    % Level 3: 4x4
+    \filldraw[fill=warmorange!40, draw=warmorange!80!black, thick, step=0.25] (9.0, -2.0) grid (10.0, -1.0);
+    \node[font=\tiny] at (9.5, -1.5) {4$\times$4};
+\end{scope}
+\node[below] at (9.5, -6.5, 0) {Spatial Pyramid Pooling (SPP)};
+
+% Converging arrows to long vector
+\coordinate (vec_dyn_start) at (13.5, -5, 0);
+\draw[->, warmorange] (10.1, -3.5, 0) to[out=0,in=180] ($(vec_dyn_start)-(2.0, 0, 0)$);
+\draw[->, warmorange] (10.1, -5.0, 0) to[out=0,in=180] ($(vec_dyn_start)-(0, 0, 0)$);
+\draw[->, warmorange] (10.1, -6.5, 0) to[out=0,in=180] ($(vec_dyn_start)+(2.0, 0, 0)$);
+
+% Temporal Vector (Super Long 1D, 10752 dim)
+\DrawBlock{16.5}{-5}{0}{6.0}{0.6}{0.6}{warmorange}{Dim: 10752}{0.9}
+
+% Projection
+\draw[->, thick] (19.5, -5, 0) -- (20.0, -5, 0);
+\DrawBlock{20.5}{-5}{0}{1.0}{0.6}{0.6}{white}{Linear\\+ReLU}{1.0}
+\draw[->, thick] (21.0, -5, 0) -- (22.0, -5, 0);
+
+% Projected Vector (512 dim)
+\DrawBlock{23.5}{-5}{0}{3.0}{0.4}{0.4}{warmorange}{Dim: 512}{0.9}
+
+
+% =================================================================================
+% PART 4: FUSION & SE-BLOCK (No GAP)
+% =================================================================================
+
+% Routing lines to concat
+\coordinate (concat_x) at (26.0, 0, 0);
+
+\draw[->, thick, techblue!80] (25.0, 5, 0) -- (25.5, 5, 0) -- (25.5, 0.5, 0) -- (concat_x);
+\draw[->, thick, warmorange!80] (25.0, -5, 0) -- (25.5, -5, 0) -- (25.5, -0.5, 0) -- (concat_x);
+
+% Concatenated Vector (1024 dim)
+\DrawBlock{27.5}{0.2}{0}{3.0}{0.4}{0.4}{techblue}{}{0.9}
+\DrawBlock{27.5}{-0.2}{0}{3.0}{0.4}{0.4}{warmorange}{}{0.9}
+\node[above, font=\bfseries] at (27.5, 0.6, 0) {Concat, Dim: 1024};
+
+% --- SE Block (U-Shape) ---
+\coordinate (se_start) at (29.0, -0.4, 0);
+\def\seY{-4.5} % Lower SE position
+
+% Arrow down
+\draw[->, thick, fusionpurple] (se_start) -- (29.0, \seY, 0) -- (29.5, \seY, 0);
+
+% FC1 (64 dim)
+\DrawBlock{30.2}{\seY}{0}{0.6}{0.4}{0.4}{fusionpurple!50}{FC\\(64)}{1.0}
+\draw[->, thick, fusionpurple] (30.6, \seY, 0) -- (31.0, \seY, 0);
+
+% ReLU
+\node[circle, draw=fusionpurple, inner sep=1pt, font=\scriptsize] (relu) at (31.3, \seY, 0) {ReLU};
+\draw[->, thick, fusionpurple] (31.6, \seY, 0) -- (32.0, \seY, 0);
+
+% FC2 (1024 dim)
+\DrawBlock{33.0}{\seY}{0}{1.2}{0.6}{0.6}{fusionpurple!50}{FC\\(1024)}{1.0}
+\draw[->, thick, fusionpurple] (33.7, \seY, 0) -- (34.1, \seY, 0);
+
+% Sigmoid
+\node[circle, draw=fusionpurple, inner sep=1pt, font=\scriptsize] (sig) at (34.5, \seY, 0) {$\sigma$};
+\draw[->, thick, fusionpurple] (34.9, \seY, 0) -- (35.3, \seY, 0);
+
+% Weight Vector (Gradient - painted flat)
+\begin{scope}[canvas is xy plane at z=0]
+    \filldraw[left color=white, right color=fusionpurple, draw=black] (35.3, \seY-0.2) rectangle (36.8, \seY+0.2);
+\end{scope}
+\node[below, align=center] at (36.0, \seY-0.3, 0) {Attention Weights\\(1024)};
+
+% Up arrow to main path
+\draw[->, thick, fusionpurple] (36.0, \seY+0.3, 0) -- (36.0, -0.5, 0);
+
+% Multiplication Node on Main Path
+\node[op, draw=fusionpurple, thick] (op_se) at (36.0, 0, 0) {$\otimes$};
+\draw[dashed, thick] (29.1, 0, 0) -- (op_se);
+
+% Dotted Box for SE
+\draw[dashed, thick, fusionpurple] (29.5, \seY-1.2, 0) rectangle (37.0, \seY+0.8, 0);
+\node[below, text=fusionpurple] at (33.25, \seY-1.2, 0) {SE-Attention (Channel Recalibration)};
+
+
+% =================================================================================
+% PART 5: CLASSIFICATION
+% =================================================================================
+
+% Fused Feature Vector
+\draw[->, thick] (op_se) -- (37.5, 0, 0);
+\DrawBlock{39.0}{0}{0}{3.0}{0.6}{0.6}{emeraldgreen!60!techblue}{Fused Feature}{0.9}
+
+% Dropout
+\draw[->, thick] (40.5, 0, 0) -- (41.5, 0, 0);
+\DrawBlock{42.5}{0}{0}{1.5}{1.0}{1.0}{emeraldgreen!40}{Dropout\\(p=0.5)}{0.9}
+
+% FC
+\draw[->, thick] (43.3, 0, 0) -- (44.3, 0, 0);
+\DrawBlock{45.3}{0}{0}{1.5}{0.8}{0.8}{emeraldgreen}{FC\\(Linear)}{0.9}
+
+% Output Classes
+\node[circle, fill=emeraldgreen!40, draw=emeraldgreen!80, minimum size=0.8cm] (pos) at (48.0, 1.5, 0) {Positive};
+\node[circle, fill=emeraldgreen!40, draw=emeraldgreen!80, minimum size=0.8cm] (neg) at (48.0, 0, 0) {Negative};
+\node[circle, fill=emeraldgreen!40, draw=emeraldgreen!80, minimum size=0.8cm] (sur) at (48.0, -1.5, 0) {Surprise};
+
+\draw[->, thick, emeraldgreen] (46.1, 0, 0) -- (pos.west);
+\draw[->, thick, emeraldgreen] (46.1, 0, 0) -- (neg.west);
+\draw[->, thick, emeraldgreen] (46.1, 0, 0) -- (sur.west);
+
+\end{tikzpicture}
+\end{document}

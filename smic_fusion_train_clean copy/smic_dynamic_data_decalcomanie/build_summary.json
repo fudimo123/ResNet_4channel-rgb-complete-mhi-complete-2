@@ -1,0 +1,11 @@
+{
+  "static_aug_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\smic_fusion_train_clean copy\\smic_static_decalcomanie",
+  "output_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\smic_fusion_train_clean copy\\smic_dynamic_data_decalcomanie",
+  "variants": [
+    "L",
+    "R"
+  ],
+  "done": 302,
+  "skipped": 0,
+  "failed": 0
+}

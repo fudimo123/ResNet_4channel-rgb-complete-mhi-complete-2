@@ -1,0 +1,21 @@
+{
+  "model_name": "LateFusionResNetSE",
+  "experiment_dir": "fusion_result_asym_se-1",
+  "checkpoint_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\casme2_fusion_train2_3class copy\\fusion_result_asym_se-1\\fusion_resnet18_casme2_final_model_for_gui.pth",
+  "checkpoint_exists": true,
+  "input_shape_per_branch": [
+    1,
+    3,
+    224,
+    224
+  ],
+  "device": "cpu",
+  "total_params": 29074661,
+  "trainable_params": 29074661,
+  "flops": 3653803202,
+  "flops_backend": "thop",
+  "fps": 32.19461002130194,
+  "latency_ms": 31.061099958606064,
+  "warmup_iters": 1,
+  "measure_iters": 1
+}

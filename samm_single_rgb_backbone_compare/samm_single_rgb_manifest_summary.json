@@ -1,0 +1,8 @@
+{
+  "output_rgb_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\samm_single_rgb_backbone_compare\\samm_aligned_rgb_offline",
+  "manifest_file": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\samm_single_rgb_backbone_compare\\samm_single_rgb_manifest.csv",
+  "done": 133,
+  "skipped": 0,
+  "failed": 0,
+  "total_manifest_rows": 133
+}

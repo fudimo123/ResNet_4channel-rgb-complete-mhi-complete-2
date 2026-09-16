@@ -1,0 +1,27 @@
+{
+  "sample_name": "sub02_EP11_01_surprise",
+  "subject_num": 2,
+  "subject_id": "sub02",
+  "sequence": "EP11_01",
+  "raw_emotion": "surprise",
+  "mapped_emotion": "surprise",
+  "predicted_class": "surprise",
+  "probabilities": {
+    "positive": 0.0005409518489614129,
+    "negative": 0.008522119373083115,
+    "surprise": 0.9909369349479675
+  },
+  "rgb_frame_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\data\\CASME2_RAW_selected\\CASME2_RAW_selected\\sub02\\EP11_01\\img69.jpg",
+  "dynamic_image_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\casme2_fusion_train2_3class copy\\dynamic_data\\sub02\\s2_EP11_01.jpg",
+  "rgb_input_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\grad-cam-lunwen\\outputs_trial_rgb_layer4_dyn_layer3_gradcampp\\sub02_EP11_01_surprise\\rgb_input.png",
+  "dynamic_input_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\grad-cam-lunwen\\outputs_trial_rgb_layer4_dyn_layer3_gradcampp\\sub02_EP11_01_surprise\\dynamic_input.png",
+  "rgb_target": "layer4",
+  "dynamic_target": "layer3",
+  "methods": {
+    "gradcampp": {
+      "single_branch_rgb_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\grad-cam-lunwen\\outputs_trial_rgb_layer4_dyn_layer3_gradcampp\\sub02_EP11_01_surprise\\single_branch_rgb_gradcampp.png",
+      "single_branch_dynamic_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\grad-cam-lunwen\\outputs_trial_rgb_layer4_dyn_layer3_gradcampp\\sub02_EP11_01_surprise\\single_branch_dynamic_gradcampp.png",
+      "dual_branch_panel_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\grad-cam-lunwen\\outputs_trial_rgb_layer4_dyn_layer3_gradcampp\\sub02_EP11_01_surprise\\dual_branch_gradcampp_panel.png"
+    }
+  }
+}

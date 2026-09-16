@@ -1,0 +1,124 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, calc, shadows.blur, shapes.geometric}
+
+\begin{document}
+
+% --- 配色 ---
+\definecolor{color_conv}{RGB}{100, 149, 237}   % 蓝 - Conv
+\definecolor{color_bn}{RGB}{255, 179, 71}      % 橙 - BN
+\definecolor{color_relu}{RGB}{144, 238, 144}   % 绿 - ReLU
+\definecolor{color_block}{RGB}{220, 220, 220}  % 灰 - Data
+
+\begin{tikzpicture}[
+    node distance=0.8cm,
+    % 定义方块样式：使用 copy shadow 模拟简单的立体感，避免手画侧面导致的缺角
+    box/.style={
+        rectangle,
+        draw=black!60,
+        thick,
+        minimum width=2.5cm,
+        inner sep=5pt,
+        align=center,
+        font=\small\sffamily,
+        % 这种阴影效果类似“悬浮”的立体感，比伪3D更整洁
+        blur shadow={shadow blur steps=5} 
+    },
+    % 如果一定要侧面立体感，可以用 double copy shadow 或者手动补全四边形
+    % 这里我们采用更高级的 cylinder 变体或者手动绘制完整的长方体
+    % 下面采用手动绘制宏来保证完美闭合
+    arrow/.style={->, >=latex, thick}
+]
+
+    % --- 宏：绘制完美的伪3D长方体 ---
+    % #1: name, #2: x, #3: y, #4: width, #5: height, #6: depth_x, #7: depth_y, #8: color, #9: text
+    \newcommand{\DrawCube}[9]{
+        % 坐标定义
+        \coordinate (#1_center) at (#2, #3);
+        \coordinate (#1_bl) at (#2-#4/2, #3-#5/2); % Bottom Left
+        \coordinate (#1_br) at (#2+#4/2, #3-#5/2); % Bottom Right
+        \coordinate (#1_tr) at (#2+#4/2, #3+#5/2); % Top Right
+        \coordinate (#1_tl) at (#2-#4/2, #3+#5/2); % Top Left
+        
+        % 深度偏移
+        \def\dx{#6}
+        \def\dy{#7}
+        
+        % 绘制背面 (Back faces) - 可选，如果不透明则不需要
+        
+        % 绘制侧面 (Side Face)
+        \filldraw[fill=#8!80, draw=black!60] (#1_br) -- ++(\dx, \dy) -- ++(0, #5) -- (#1_tr) -- cycle;
+        
+        % 绘制顶面 (Top Face)
+        \filldraw[fill=#8!60, draw=black!60] (#1_tl) -- ++(\dx, \dy) -- ++(#4, 0) -- (#1_tr) -- cycle;
+        
+        % 绘制正面 (Front Face)
+        \filldraw[fill=#8, draw=black!60] (#1_bl) rectangle (#1_tr);
+        
+        % 文本
+        \node at (#1_center) [font=\small\sffamily] {#9};
+        
+        % 定义节点别名方便连线
+        \coordinate (#1_north) at (#2, #3+#5/2);
+        \coordinate (#1_south) at (#2, #3-#5/2);
+        \coordinate (#1_east) at (#2+#4/2, #3);
+        \coordinate (#1) at (#1_center); % 主节点
+    }
+
+    % --- 布局参数 ---
+    \def\cx{0} % 中心X
+    \def\cy{0} % 当前Y
+    \def\w{2.5} % 宽
+    \def\d_x{0.4} % 深度X偏移
+    \def\d_y{0.3} % 深度Y偏移
+    \def\gap{1.2} % 间距
+
+    % 1. Input Feature
+    \DrawCube{input}{\cx}{\cy}{\w}{0.5}{\d_x}{\d_y}{color_block}{Input Feature}
+    
+    % 2. Conv 3x3
+    \pgfmathsetmacro{\cy}{\cy - \gap}
+    \DrawCube{conv1}{\cx}{\cy}{\w}{0.8}{\d_x}{\d_y}{color_conv}{Conv 3x3}
+    \draw[arrow] (input_south) -- (conv1_north);
+
+    % 3. BN
+    \pgfmathsetmacro{\cy}{\cy - \gap + 0.2} % BN 离 Conv 近一点
+    \DrawCube{bn1}{\cx}{\cy}{\w}{0.5}{\d_x}{\d_y}{color_bn}{BN}
+    \draw[arrow] (conv1_south) -- (bn1_north);
+
+    % 4. ReLU
+    \pgfmathsetmacro{\cy}{\cy - \gap + 0.2}
+    \DrawCube{relu1}{\cx}{\cy}{\w}{0.5}{\d_x}{\d_y}{color_relu}{ReLU}
+    \draw[arrow] (bn1_south) -- (relu1_north);
+
+    % 5. Conv 3x3
+    \pgfmathsetmacro{\cy}{\cy - \gap}
+    \DrawCube{conv2}{\cx}{\cy}{\w}{0.8}{\d_x}{\d_y}{color_conv}{Conv 3x3}
+    \draw[arrow] (relu1_south) -- (conv2_north);
+
+    % 6. BN
+    \pgfmathsetmacro{\cy}{\cy - \gap + 0.2}
+    \DrawCube{bn2}{\cx}{\cy}{\w}{0.5}{\d_x}{\d_y}{color_bn}{BN}
+    \draw[arrow] (conv2_south) -- (bn2_north);
+
+    % 7. Addition (+)
+    \pgfmathsetmacro{\cy}{\cy - \gap + 0.2}
+    \node[circle, draw, thick, inner sep=0pt, minimum size=0.6cm, fill=white] (add) at (\cx, \cy) {\Large +};
+    \draw[arrow] (bn2_south) -- (add);
+
+    % 8. Shortcut Connection
+    % 从 Input 下方引出
+    \draw[arrow, dashed, red, thick] (input_south) ++(0.5, 0) -- ++(2.0, 0) |- (add.east) node[pos=0.25, right, font=\small\color{red}] {Identity Shortcut};
+
+    % 9. ReLU
+    \pgfmathsetmacro{\cy}{\cy - \gap + 0.2}
+    \DrawCube{relu2}{\cx}{\cy}{\w}{0.5}{\d_x}{\d_y}{color_relu}{ReLU}
+    \draw[arrow] (add) -- (relu2_north);
+
+    % 10. Output Feature
+    \pgfmathsetmacro{\cy}{\cy - \gap + 0.2}
+    \DrawCube{output}{\cx}{\cy}{\w}{0.5}{\d_x}{\d_y}{color_block}{Output Feature}
+    \draw[arrow] (relu2_south) -- (output_north);
+
+\end{tikzpicture}
+\end{document}

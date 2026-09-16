@@ -1,0 +1,34 @@
+--- Final Metrics (Mean ± Std over 3 runs) ---
+
+--- Overall Performance ---
+Accuracy              : 0.8571 ± 0.0281
+Precision (weighted)  : 0.8542 ± 0.0315
+Recall (weighted)     : 0.8571 ± 0.0281
+F1 score (weighted)   : 0.8503 ± 0.0310
+UAR                   : 0.7400 ± 0.0449
+UF1                   : 0.7663 ± 0.0446
+
+--- Per-class Metrics ---
+  Class: positive
+    Precision   : 0.7814 ± 0.0720
+    Recall      : 0.6154 ± 0.1088
+    F1-score    : 0.6815 ± 0.0664
+  Class: negative
+    Precision   : 0.8899 ± 0.0275
+    Recall      : 0.9601 ± 0.0102
+    F1-score    : 0.9235 ± 0.0185
+  Class: surprise
+    Precision   : 0.7614 ± 0.1163
+    Recall      : 0.6444 ± 0.0314
+    F1-score    : 0.6937 ± 0.0541
+
+--- Confusion Matrix ---
+Mean:
+[[16.00 7.67 2.33]
+ [2.67 88.33 1.00]
+ [2.00 3.33 9.67]]
+
+Std Dev:
+[[2.83 2.05 1.25]
+ [1.25 0.94 0.82]
+ [0.82 0.94 0.47]]

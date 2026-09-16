@@ -1,0 +1,5 @@
+JAFFE LOSO ResNet-18 Results
+Run 1 Avg Best Val Acc: 0.9777
+Run 2 Avg Best Val Acc: 0.9782
+Run 3 Avg Best Val Acc: 0.9944
+Overall Avg Across Runs: 0.9835

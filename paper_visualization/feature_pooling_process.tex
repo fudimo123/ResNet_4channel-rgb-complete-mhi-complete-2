@@ -1,0 +1,107 @@
+\documentclass[tikz,border=10pt]{standalone} 
+ \usepackage{tikz} 
+ \usetikzlibrary{positioning, 3d, calc, arrows.meta, shapes.geometric, decorations.pathreplacing} 
+ 
+ % --- Colors --- 
+ \definecolor{feat_blue}{RGB}{70, 130, 180}    % Feature Map 
+ \definecolor{grid_red}{RGB}{220, 20, 60}      % Grid Lines 
+ \definecolor{pool_gold}{RGB}{255, 215, 0}     % Pooled Values 
+ \definecolor{arrow_gray}{RGB}{105, 105, 105}  % Arrows 
+ \definecolor{vec_green}{RGB}{46, 204, 113}    % Flattened Vector 
+ 
+ \begin{document} 
+ 
+ \begin{tikzpicture}[ 
+     x={(1cm,0cm)}, y={(0.5cm,0.25cm)}, z={(0cm,1cm)}, 
+     scale=1.5, 
+     >=Stealth, 
+     font=\sffamily\small 
+ ] 
+ 
+ % ================================================================================= 
+ % 1. INPUT FEATURE MAP 
+ % ================================================================================= 
+ \def\xInput{0} 
+ \foreach \i in {-0.4, -0.3, -0.2, -0.1} { 
+     \begin{scope}[canvas is yz plane at x=\xInput+\i] 
+         \filldraw[fill=feat_blue!20, draw=feat_blue!50] (-2, -2) rectangle (2, 2); 
+     \end{scope} 
+ } 
+ \begin{scope}[canvas is yz plane at x=\xInput] 
+     \node[transform shape, inner sep=0, opacity=0.9] at (0,0) { 
+         \includegraphics[width=4cm, height=4cm]{refined_feature_map.png} 
+     }; 
+     \draw[feat_blue, thick] (-2, -2) rectangle (2, 2); 
+     
+     \draw[grid_red, very thick, dashed] (0, -2) -- (0, 2); 
+     \draw[grid_red, very thick, dashed] (-2, 0) -- (2, 0); 
+     
+     \node[grid_red, fill=white, inner sep=1pt, opacity=0.8] at (-1, 1) {$R_{0,0}$}; 
+     \node[grid_red, fill=white, inner sep=1pt, opacity=0.8] at (1, 1) {$R_{0,1}$}; 
+     \node[grid_red, fill=white, inner sep=1pt, opacity=0.8] at (-1, -1) {$R_{1,0}$}; 
+     \node[grid_red, fill=white, inner sep=1pt, opacity=0.8] at (1, -1) {$R_{1,1}$}; 
+ \end{scope} 
+ % [调整] xshift=1.0cm (大幅右移), yshift=-3.0cm 
+ \node[below, align=center, yshift=-3.0cm, xshift=1.0cm] at (\xInput, 0, 0) {Refined Feature\\$F''_S$ ($7 \times 7 \times C$)}; 
+ 
+ 
+ % ================================================================================= 
+ % 2. POOLING OPERATION 
+ % ================================================================================= 
+ \def\xPool{4} 
+ \draw[->, thick, arrow_gray] (\xInput, -1, 1) -- (\xPool-0.5, -0.5, 0.5); 
+ \draw[->, thick, arrow_gray] (\xInput, 1, 1) -- (\xPool-0.5, 0.5, 0.5); 
+ \draw[->, thick, arrow_gray] (\xInput, -1, -1) -- (\xPool-0.5, -0.5, -0.5); 
+ \draw[->, thick, arrow_gray] (\xInput, 1, -1) -- (\xPool-0.5, 0.5, -0.5); 
+ \node[align=center, scale=0.8] at (\xPool-1.5, 0, 0) {AvgPool}; 
+ 
+ 
+ % ================================================================================= 
+ % 3. POOLED OUTPUT 
+ % ================================================================================= 
+ \begin{scope}[canvas is yz plane at x=\xPool] 
+     \filldraw[fill=pool_gold!30, draw=pool_gold, thick] (-1, 0) rectangle (0, 1); 
+     \node at (-0.5, 0.5) {$y_{0,0}$}; 
+     \filldraw[fill=pool_gold!30, draw=pool_gold, thick] (0, 0) rectangle (1, 1); 
+     \node at (0.5, 0.5) {$y_{0,1}$}; 
+     \filldraw[fill=pool_gold!30, draw=pool_gold, thick] (-1, -1) rectangle (0, 0); 
+     \node at (-0.5, -0.5) {$y_{1,0}$}; 
+     \filldraw[fill=pool_gold!30, draw=pool_gold, thick] (0, -1) rectangle (1, 0); 
+     \node at (0.5, -0.5) {$y_{1,1}$}; 
+     \draw[pool_gold, very thick] (-1, -1) rectangle (1, 1); 
+ \end{scope} 
+ \node[below, align=center, yshift=-2.0cm] at (\xPool, 0, 0) {Pooled Grid\\$2 \times 2 \times C$}; 
+ 
+ 
+ % ================================================================================= 
+ % 4. FLATTEN TO VECTOR 
+ % ================================================================================= 
+ \def\xFlat{7} 
+ \draw[->, thick, arrow_gray] (\xPool+0.2, 0, 0) -- node[above, scale=0.8]{Flatten} (\xFlat-0.2, 0, 0); 
+ 
+ % Block 1 (Top) 
+ \filldraw[fill=vec_green!30, draw=vec_green] (\xFlat, -0.3, 1) rectangle (\xFlat+0.5, 0.3, 2); 
+ \node[scale=0.7] at (\xFlat+0.25, 0, 1.5) {$y_{0,0}$}; 
+ 
+ % Block 2 
+ \filldraw[fill=vec_green!30, draw=vec_green] (\xFlat, -0.3, 0) rectangle (\xFlat+0.5, 0.3, 1); 
+ \node[scale=0.7] at (\xFlat+0.25, 0, 0.5) {$y_{0,1}$}; 
+ 
+ % Block 3 
+ \filldraw[fill=vec_green!30, draw=vec_green] (\xFlat, -0.3, -1) rectangle (\xFlat+0.5, 0.3, 0); 
+ \node[scale=0.7] at (\xFlat+0.25, 0, -0.5) {$y_{1,0}$}; 
+ 
+ % Block 4 (Bottom) 
+ \filldraw[fill=vec_green!30, draw=vec_green] (\xFlat, -0.3, -2) rectangle (\xFlat+0.5, 0.3, -1); 
+ \node[scale=0.7] at (\xFlat+0.25, 0, -1.5) {$y_{1,1}$}; 
+ 
+ % Brace 
+ \draw[decorate, decoration={brace, amplitude=5pt, raise=5pt}, thick, gray] (\xFlat+0.8, 0, 2) -- (\xFlat+0.8, 0, -2); 
+ 
+ \node[right, align=left] at (\xFlat+1.2, 0, 0) { 
+     Spatial Vector $v_S$\\ 
+     $4 \times 512 = 2048$ 
+ }; 
+ 
+ \end{tikzpicture} 
+ \end{document}

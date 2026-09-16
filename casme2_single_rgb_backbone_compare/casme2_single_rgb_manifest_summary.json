@@ -1,0 +1,8 @@
+{
+  "output_rgb_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\casme2_single_rgb_backbone_compare\\casme2_aligned_rgb_offline",
+  "manifest_file": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\casme2_single_rgb_backbone_compare\\casme2_single_rgb_manifest.csv",
+  "done": 139,
+  "skipped": 17,
+  "failed": 0,
+  "total_manifest_rows": 156
+}

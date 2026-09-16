@@ -1,0 +1,300 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, 3d, calc, shapes, backgrounds, fit, shadows}
+
+% Define Colors
+\definecolor{techblue}{RGB}{50, 100, 200}
+\definecolor{lightblue}{RGB}{180, 210, 255}
+\definecolor{warmorange}{RGB}{255, 140, 50}
+\definecolor{coralred}{RGB}{255, 100, 80}
+\definecolor{fusionpurple}{RGB}{140, 50, 200}
+\definecolor{emeraldgreen}{RGB}{40, 180, 100}
+
+\begin{document}
+\begin{tikzpicture}[
+    x={(1cm,0cm)}, y={(0cm,1cm)}, z={(0.4cm,0.3cm)},
+    font=\sffamily\footnotesize,
+    >=Stealth,
+    node distance=1.5cm
+]
+
+% Styles
+\tikzstyle{imgnode} = [draw=black!30, thick, inner sep=0pt, fill=white, drop shadow]
+\tikzstyle{trapezoid_backbone} = [
+    top color=white, bottom color=black!10,
+    draw=black!50, thick,
+    shape=trapezium, trapezium angle=75,
+    minimum height=1.2cm, minimum width=2.5cm,
+    trapezium stretches=true,
+    inner sep=0pt
+]
+\tikzstyle{cube} = [
+    draw=black!60, line width=0.5pt,
+    fill opacity=0.8
+]
+\tikzstyle{vector} = [
+    draw=black!60, rounded corners=2pt,
+    line width=0.5pt
+]
+\tikzstyle{op} = [
+    circle, draw=black, thick, fill=white, inner sep=0pt, minimum size=0.4cm, font=\large
+]
+
+% =================================================================================
+% PART 1: INPUTS
+% =================================================================================
+
+% --- Top Branch (RGB) ---
+\node[imgnode] (input_rgb) at (0, 3, 0) {
+    \includegraphics[width=2cm, height=2cm]{rgb_input.jpg}
+};
+\node[below=0.2cm of input_rgb] {Static RGB Frame (Apex)};
+
+% --- Bottom Branch (Dynamic) ---
+\node[imgnode] (input_dyn) at (0, -3, 0) {
+    \includegraphics[width=2cm, height=2cm]{dynamic_input.jpg}
+};
+\node[below=0.2cm of input_dyn] {Dynamic Image (Motion)};
+
+
+% =================================================================================
+% PART 2: BACKBONES (ResNet-18)
+% =================================================================================
+
+% --- RGB Backbone ---
+% 3D Trapezoid Effect manually drawing to look better than shape=trapezium in 3D
+\coordinate (bb_rgb_start) at (2.5, 3, 0);
+\coordinate (bb_rgb_end) at (5.5, 3, 0);
+
+% Front Face (Trapezoid)
+\draw[fill=techblue!20, draw=techblue!80, thick] 
+    ($(bb_rgb_start)+(0, 0.8, 0)$) coordinate (rtl) -- 
+    ($(bb_rgb_start)+(0, -0.8, 0)$) coordinate (rbl) -- 
+    ($(bb_rgb_end)+(0, -0.4, 0)$) coordinate (rbr) -- 
+    ($(bb_rgb_end)+(0, 0.4, 0)$) coordinate (rtr) -- cycle;
+% Side/Top (3D effect)
+\draw[fill=techblue!10, draw=techblue!80, thick] (rtr) -- (rbr) -- ($(rbr)+(0,0,-1)$) -- ($(rtr)+(0,0,-1)$) -- cycle;
+\draw[fill=techblue!10, draw=techblue!80, thick] (rtl) -- (rtr) -- ($(rtr)+(0,0,-1)$) -- ($(rtl)+(0,0,-1)$) -- cycle;
+
+\node[align=center, text=techblue!80!black] at (4, 3, 0) {ResNet-18\\Backbone};
+
+% Output Feature Map (RGB) - Cube
+\coordinate (feat_rgb_pos) at (6.5, 3, 0);
+\draw[cube, fill=techblue!40] (feat_rgb_pos) -- ++(0, 0.8, 0) -- ++(0.8, 0, 0) -- ++(0, -0.8, 0) -- cycle;
+\draw[cube, fill=techblue!30] ($(feat_rgb_pos)+(0,0.8,0)$) -- ++(0,0,-0.8) -- ++(0.8,0,0) -- ++(0,0,0.8) -- cycle;
+\draw[cube, fill=techblue!50] ($(feat_rgb_pos)+(0.8,0,0)$) -- ++(0,0.8,0) -- ++(0,0,-0.8) -- ++(0,-0.8,0) -- cycle;
+\node[below=0.5cm of feat_rgb_pos, xshift=0.4cm] {$C \times H \times W$};
+
+
+% --- Dynamic Backbone ---
+\coordinate (bb_dyn_start) at (2.5, -3, 0);
+\coordinate (bb_dyn_end) at (5.5, -3, 0);
+
+% Front Face
+\draw[fill=warmorange!20, draw=warmorange!80, thick] 
+    ($(bb_dyn_start)+(0, 0.8, 0)$) coordinate (dtl) -- 
+    ($(bb_dyn_start)+(0, -0.8, 0)$) coordinate (dbl) -- 
+    ($(bb_dyn_end)+(0, -0.4, 0)$) coordinate (dbr) -- 
+    ($(bb_dyn_end)+(0, 0.4, 0)$) coordinate (dtr) -- cycle;
+% 3D sides
+\draw[fill=warmorange!10, draw=warmorange!80, thick] (dtr) -- (dbr) -- ($(dbr)+(0,0,-1)$) -- ($(dtr)+(0,0,-1)$) -- cycle;
+\draw[fill=warmorange!10, draw=warmorange!80, thick] (dtl) -- (dtr) -- ($(dtr)+(0,0,-1)$) -- ($(dtl)+(0,0,-1)$) -- cycle;
+
+\node[align=center, text=warmorange!80!black] at (4, -3, 0) {ResNet-18\\Backbone};
+
+% Output Feature Map (Dynamic) - Cube
+\coordinate (feat_dyn_pos) at (6.5, -3, 0);
+\draw[cube, fill=warmorange!40] (feat_dyn_pos) -- ++(0, 0.8, 0) -- ++(0.8, 0, 0) -- ++(0, -0.8, 0) -- cycle;
+\draw[cube, fill=warmorange!30] ($(feat_dyn_pos)+(0,0.8,0)$) -- ++(0,0,-0.8) -- ++(0.8,0,0) -- ++(0,0,0.8) -- cycle;
+\draw[cube, fill=warmorange!50] ($(feat_dyn_pos)+(0.8,0,0)$) -- ++(0,0.8,0) -- ++(0,0,-0.8) -- ++(0,-0.8,0) -- cycle;
+\node[below=0.5cm of feat_dyn_pos, xshift=0.4cm] {$C \times H \times W$};
+
+
+% Arrows from Input to Backbone to Feature
+\draw[->, thick, techblue] (input_rgb) -- (2.5, 3, 0);
+\draw[->, thick, techblue] (5.5, 3, 0) -- (6.5, 3, 0);
+\draw[->, thick, warmorange] (input_dyn) -- (2.5, -3, 0);
+\draw[->, thick, warmorange] (5.5, -3, 0) -- (6.5, -3, 0);
+
+
+% =================================================================================
+% PART 3: ASYMMETRIC MODULES
+% =================================================================================
+
+% --- TOP: CBAM + Grid Pooling ---
+
+% 1. CBAM Channel
+\coordinate (cbam_start) at (8.0, 3, 0);
+\draw[->, thick] ($(feat_rgb_pos)+(0.8, 0.4, 0)$) -- (cbam_start);
+
+% Channel Slice
+\draw[cube, fill=red!40] (cbam_start) -- ++(0, 0.8, 0) -- ++(0.2, 0, 0) -- ++(0, -0.8, 0) -- cycle;
+\draw[cube, fill=red!30] ($(cbam_start)+(0,0.8,0)$) -- ++(0,0,-0.8) -- ++(0.2,0,0) -- ++(0,0,0.8) -- cycle;
+\draw[cube, fill=red!50] ($(cbam_start)+(0.2,0,0)$) -- ++(0,0.8,0) -- ++(0,0,-0.8) -- ++(0,-0.8,0) -- cycle;
+
+\node[op, scale=0.7] (mul1) at (8.8, 3.4, 0) {$\otimes$};
+
+% 2. CBAM Spatial
+\coordinate (spatial_start) at (9.5, 3, 0);
+\draw[->, thick] (mul1) -- (spatial_start);
+% Spatial Grid (Flat)
+\draw[fill=gray!20, draw=black, step=0.2] (spatial_start) grid ++(0.8, 0.8);
+\node[op, scale=0.7] (mul2) at (10.8, 3.4, 0) {$\otimes$};
+
+\draw[->, thick] ($(spatial_start)+(0.8, 0.4)$) -- (mul2);
+
+\node[below=0.6cm of spatial_start, align=center, font=\scriptsize] {CBAM\\(Attention)};
+
+% 3. Grid Pooling
+\coordinate (grid_start) at (11.8, 2.6, 0); % Lowered slightly to center
+\draw[->, thick] (mul2) -- ($(grid_start)+(-0.2, 0.8, 0)$);
+
+% 7x7 Grid (Symbolic)
+\draw[fill=lightblue!20, draw=techblue, step=0.4] (grid_start) grid ++(1.6, 1.6);
+% Bold lines for 2x2 split
+\draw[techblue!80!black, very thick] ($(grid_start)+(0.8, 0)$) -- ++(0, 1.6);
+\draw[techblue!80!black, very thick] ($(grid_start)+(0, 0.8)$) -- ++(1.6, 0);
+
+% Arrows converging
+\coordinate (vec_rgb_start) at (14.5, 3.4, 0);
+\draw[->, techblue] ($(grid_start)+(0.4, 1.2)$) to[out=0,in=180] (vec_rgb_start);
+\draw[->, techblue] ($(grid_start)+(1.2, 1.2)$) to[out=0,in=180] (vec_rgb_start);
+\draw[->, techblue] ($(grid_start)+(0.4, 0.4)$) to[out=0,in=180] (vec_rgb_start);
+\draw[->, techblue] ($(grid_start)+(1.2, 0.4)$) to[out=0,in=180] (vec_rgb_start);
+
+\node[below=0.2cm of grid_start, font=\scriptsize] {Grid Pooling (2x2)};
+
+% 4. 1D Vector RGB
+\draw[vector, fill=techblue!60] (vec_rgb_start) rectangle ++(2.0, 0.4);
+\node[above=0.1cm of vec_rgb_start, xshift=1cm, font=\scriptsize, text=techblue!80!black] {Spatial Vector};
+
+
+% --- BOTTOM: SPP ---
+
+\coordinate (spp_start) at (8.5, -3, 0);
+\draw[->, thick] ($(feat_dyn_pos)+(0.8, 0.4, 0)$) -- (spp_start);
+
+% Level 1: 1x1
+\draw[fill=warmorange!20, draw=warmorange] (spp_start) rectangle ++(1.0, 1.0);
+\node at ($(spp_start)+(0.5, 0.5)$) {1x1};
+
+% Level 2: 2x2
+\coordinate (spp_l2) at ($(spp_start)+(0, -1.2)$);
+\draw[fill=warmorange!20, draw=warmorange, step=0.5] (spp_l2) grid ++(1.0, 1.0);
+\node at ($(spp_l2)+(0.5, 0.5)$) {2x2};
+
+% Level 3: 4x4
+\coordinate (spp_l3) at ($(spp_l2)+(0, -1.2)$);
+\draw[fill=warmorange!20, draw=warmorange, step=0.25] (spp_l3) grid ++(1.0, 1.0);
+\node at ($(spp_l3)+(0.5, 0.5)$) {4x4};
+
+\node[below=0.2cm of spp_l3, font=\scriptsize] {Spatial Pyramid Pooling (SPP)};
+
+% Merging Arrows
+\coordinate (vec_dyn_start) at (12.5, -3, 0); % Shifted left to make vector longer
+\draw[->, warmorange] ($(spp_start)+(1.0, 0.5)$) -- ($(vec_dyn_start)+(0, 0.2)$);
+\draw[->, warmorange] ($(spp_l2)+(1.0, 0.5)$) -- ($(vec_dyn_start)+(0, 0.2)$);
+\draw[->, warmorange] ($(spp_l3)+(1.0, 0.5)$) -- ($(vec_dyn_start)+(0, 0.2)$);
+
+% Super Long 1D Vector Dynamic
+\draw[vector, fill=warmorange!60] (vec_dyn_start) rectangle ++(4.0, 0.4);
+\node[below=0.1cm of vec_dyn_start, xshift=2cm, font=\scriptsize, text=warmorange!80!black] {Temporal Vector};
+
+
+% =================================================================================
+% PART 4: FUSION & SE-BLOCK
+% =================================================================================
+
+% Concat Point
+\coordinate (concat_x) at (17.5, 0, 0);
+
+% Routing lines to concat
+\draw[->, thick, techblue!80] ($(vec_rgb_start)+(2.0, 0.2)$) -| (concat_x);
+\draw[->, thick, warmorange!80] ($(vec_dyn_start)+(4.0, 0.2)$) -| (concat_x);
+
+% Concatenated Vector
+\coordinate (vec_fused_start) at (18.0, -0.5, 0);
+% Top half blue
+\draw[vector, fill=techblue!60] (vec_fused_start) rectangle ++(2.5, 0.5);
+% Bottom half orange
+\draw[vector, fill=warmorange!60] ($(vec_fused_start)+(0, -0.5)$) rectangle ++(2.5, 0.5);
+
+\node[above=0.6cm of vec_fused_start, xshift=1.25cm, font=\bfseries] {Concat};
+
+% --- SE Block (U-Shape) ---
+\coordinate (se_start) at (19.25, -1.0, 0); % Bottom of fused vector
+\coordinate (se_bottom) at (19.25, -4.5, 0);
+
+% Down arrow
+\draw[->, thick, fusionpurple] (se_start) -- (se_bottom);
+
+% SE Components along the bottom
+% GAP
+\node[draw, fill=white, minimum size=0.6cm, font=\scriptsize] (gap) at ($(se_bottom)+(1.0, 0)$) {GAP};
+\draw[->, thick, fusionpurple] (se_bottom) -- (gap);
+
+% FC1
+\node[draw, fill=fusionpurple!20, minimum height=0.4cm, minimum width=0.2cm] (fc1) at ($(gap)+(1.2, 0)$) {};
+\node[below=0.1cm of fc1, font=\tiny] {FC};
+\draw[->, thick, fusionpurple] (gap) -- (fc1);
+
+% ReLU
+\node[circle, draw=fusionpurple, inner sep=1pt, font=\scriptsize] (relu) at ($(fc1)+(0.8, 0)$) {$\delta$};
+\draw[->, thick, fusionpurple] (fc1) -- (relu);
+
+% FC2
+\node[draw, fill=fusionpurple!20, minimum height=0.8cm, minimum width=0.2cm] (fc2) at ($(relu)+(0.8, 0)$) {};
+\node[below=0.1cm of fc2, font=\tiny] {FC};
+\draw[->, thick, fusionpurple] (relu) -- (fc2);
+
+% Sigmoid
+\node[circle, draw=fusionpurple, inner sep=1pt, font=\scriptsize] (sig) at ($(fc2)+(0.8, 0)$) {$\sigma$};
+\draw[->, thick, fusionpurple] (fc2) -- (sig);
+
+% Weight Vector (Gradient)
+\coordinate (w_vec) at ($(sig)+(1.0, 0)$);
+\shade[left color=white, right color=fusionpurple] (w_vec) rectangle ++(0.4, 1.0);
+\draw[black!50] (w_vec) rectangle ++(0.4, 1.0);
+\node[below=0.1cm of w_vec, xshift=0.2cm] {$w$};
+
+\draw[->, thick, fusionpurple] (sig) -- (w_vec);
+
+% Up arrow to main path
+\coordinate (mul_se) at (22.5, -0.5, 0);
+\draw[->, thick, fusionpurple] ($(w_vec)+(0.2, 1.0)$) |- (mul_se);
+
+% Multiplication Node on Main Path
+\draw[dashed, thick] ($(vec_fused_start)+(2.5, 0)$) -- (mul_se);
+\node[op, draw=fusionpurple, thick] (op_se) at (mul_se) {$\otimes$};
+
+% Dotted Box for SE
+\node[draw=fusionpurple, dashed, fit=(gap) (sig) (w_vec) (se_bottom), inner sep=0.3cm, label={[fusionpurple]below:SE-Attention}] {};
+
+
+% =================================================================================
+% PART 5: CLASSIFICATION
+% =================================================================================
+
+% Fused Feature Vector
+\coordinate (final_vec) at (24.0, -0.5, 0);
+\draw[->, thick] (op_se) -- (final_vec);
+\draw[vector, left color=techblue!40, right color=warmorange!40] (final_vec) rectangle ++(1.5, 1.0);
+\node[above=0.1cm of final_vec, xshift=0.75cm, font=\scriptsize] {Fused Feature};
+
+% FC & Dropout
+\coordinate (cls_block) at (26.5, 0, 0);
+\draw[->, thick] ($(final_vec)+(1.5, 0.5)$) -- (cls_block);
+\node[draw, fill=emeraldgreen!20, minimum height=1.5cm, minimum width=1.0cm, align=center, font=\scriptsize] (fc_drop) at (27.0, 0, 0) {FC \&\\Dropout};
+
+% Output Classes
+\coordinate (out_pos) at (29.0, 0, 0);
+\node[circle, fill=emeraldgreen!40, draw=emeraldgreen!80, minimum size=0.8cm] (pos) at (29.0, 1.5, 0) {Pos};
+\node[circle, fill=emeraldgreen!40, draw=emeraldgreen!80, minimum size=0.8cm] (neg) at (29.0, 0, 0) {Neg};
+\node[circle, fill=emeraldgreen!40, draw=emeraldgreen!80, minimum size=0.8cm] (sur) at (29.0, -1.5, 0) {Sur};
+
+\draw[->, thick, emeraldgreen] (fc_drop.east) -- (pos.west);
+\draw[->, thick, emeraldgreen] (fc_drop.east) -- (neg.west);
+\draw[->, thick, emeraldgreen] (fc_drop.east) -- (sur.west);
+
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,39 @@
+{
+    "RESULT_DIR": "result2",
+    "NUM_EPOCHS": 50,
+    "BATCH_SIZE": 16,
+    "LEARNING_RATE": 0.001,
+    "WEIGHT_DECAY": 0.0001,
+    "WARMUP_EPOCHS": 5,
+    "CLIP_GRAD_NORM": 1.0,
+    "MODEL": "ResNet-18 with AdamW, Grad Clip, CosineAnnealingLR",
+    "train_transform": {
+        "Resize": {
+            "size": [
+                224,
+                224
+            ]
+        },
+        "RandomRotation": {
+            "degrees": 3
+        },
+        "ToTensor": {},
+        "Normalize": {
+            "mean": [
+                0.5
+            ],
+            "std": [
+                0.5
+            ]
+        }
+    },
+    "reproducibility": {
+        "seeds": [
+            42,
+            43,
+            44
+        ],
+        "cudnn.benchmark": false,
+        "cudnn.deterministic": true
+    }
+}

@@ -1,0 +1,46 @@
+--- Final Metrics (Mean ± Std over 3 runs) ---
+
+--- Overall Performance ---
+Accuracy          : 0.6574 ± 0.0264
+Precision         : 0.6338 ± 0.0208
+Recall            : 0.6447 ± 0.0453
+F1 score          : 0.6337 ± 0.0339
+Uar               : 0.6447 ± 0.0453
+Uf1               : 0.6337 ± 0.0339
+
+--- Per-class Metrics ---
+  Class: disgust
+    Precision   : 0.6612 ± 0.0317
+    Recall      : 0.7037 ± 0.0524
+    F1-score    : 0.6815 ± 0.0401
+  Class: happiness
+    Precision   : 0.5129 ± 0.0523
+    Recall      : 0.6562 ± 0.0442
+    F1-score    : 0.5739 ± 0.0386
+  Class: repression
+    Precision   : 0.4549 ± 0.0427
+    Recall      : 0.4568 ± 0.1364
+    F1-score    : 0.4503 ± 0.0899
+  Class: surprise
+    Precision   : 0.7955 ± 0.0534
+    Recall      : 0.7467 ± 0.1147
+    F1-score    : 0.7634 ± 0.0578
+  Class: sadness_fear_others
+    Precision   : 0.7447 ± 0.0331
+    Recall      : 0.6603 ± 0.0090
+    F1-score    : 0.6994 ± 0.0094
+
+--- Confusion Matrix ---
+Mean:
+[[44.33 4.00 1.00 1.00 12.67]
+ [1.33 21.00 4.67 0.67 4.33]
+ [2.00 7.00 12.33 0.33 5.33]
+ [2.67 1.00 1.00 18.67 1.67]
+ [16.67 8.33 7.67 3.00 69.33]]
+
+Std Dev:
+[[3.30 1.63 0.82 0.82 2.49]
+ [0.47 1.41 1.70 0.47 0.94]
+ [1.63 1.63 3.68 0.47 2.05]
+ [0.94 0.82 0.00 2.87 1.70]
+ [0.47 1.25 1.70 1.41 0.94]]

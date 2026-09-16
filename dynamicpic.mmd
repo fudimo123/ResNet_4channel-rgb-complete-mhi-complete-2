@@ -1,0 +1,20 @@
+graph TD
+    %% 样式定义
+    classDef process fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+    classDef decision fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
+    classDef io fill:#f3e5f5,stroke:#4a148c,stroke-width:2px;
+
+    start(开始: 原始微表情序列 V):::io --> check{帧数 N > 0 ?}:::decision
+    
+    check -- 否 --> err[报错/跳过]:::process
+    check -- 是 --> calc[计算时间系数 Lambda<br>coeff = 2*j+1 - N - 1 / j+1]:::process
+    
+    calc --> norm1[系数归一化]:::process
+    norm1 --> weight[加权汇聚 Sum<br>D = Σ coeff * frame]:::process
+    
+    weight --> norm2[Min-Max 归一化<br>映射至 0-255]:::process
+    norm2 --> dtype[转换为 uint8 格式]:::process
+    
+    dtype --> save(保存: 动态图 Dynamic Image):::io
+    save --> mtcnn[MTCNN 对齐与裁剪]:::process
+    mtcnn --> net(输入至网络分支 2):::io

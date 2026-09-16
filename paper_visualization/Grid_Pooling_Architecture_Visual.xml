@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="Electron" modified="2023-10-27T00:00:00.000Z" agent="Mozilla/5.0" version="21.2.8" type="device">
+  <diagram id="grid_pooling_detailed" name="Grid Pooling Detailed">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- 1. Refined Feature Map Stack (Simulating Channels) -->
+        <mxCell id="ch4" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="80" y="180" width="160" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="ch3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="90" y="190" width="160" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="ch2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="100" y="200" width="160" height="200" as="geometry" />
+        </mxCell>
+        
+        <!-- Front Feature Map (Heatmap Gradient) -->
+        <mxCell id="front_map" value="" style="shape=image;image=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOcAAADnCAYAAADl9EEgAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjUsIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmcvWftoOwAAAAlwSFlzAAAPYQAAD2EBqD+naQAAA+FJREFUeJzt3b+uHwIYx+H3nP7qnLbxJ1URUY0gDAaRMNisVtfgIlyLyWK1G4wuwGIgElMTDRWijeo5v+MG7O9neJ4r+C6fvON7MnPtatadbA+YZ8/f2p4wj/99sD1hTk4O2xPm4vL37QkJp9sDgP8nTogSJ0SJE6LECVHihChxQpQ4IUqcECVOiBInRIkTosQJUeKEKHFClDghSpwQJU6IEidEiROixAlR4oQocUKUOCFKnBAlTogSJ0SJE6LECVHihChxQpQ4Iepw++Z72xvm/OS57Qlzc/Y33L/+dHtCwsXlw+0JM7P/U9rlhChxQpQ4IUqcECVOiBInRIkTosQJUeKEKHFClDghSpwQJU6IEidEiROixAlR4oQocUKUOCFKnBAlTogSJ0SJE6LECVHihChxQpQ4IUqcECVOiBInRIkTosQJUYdX5+3tDXPv5MXtCXN1tf8s9Xg4bk+YXy9+3J4wt87e2J4wj578vD3B5YQqcUKUOCFKnBAlTogSJ0SJE6LECVHihChxQpQ4IUqcECVOiBInRIkTosQJUeKEKHFClDghSpwQJU6IEidEiROixAlR4oQocUKUOCFKnBAlTogSJ0SJE6LECVGHv07/2N4wM/vPc28drm1PmDefvrY9Ya4fntmeMLePL2xPmB9unG1PcDmhSpwQJU6IEidEiROixAlR4oQocUKUOCFKnBAlTogSJ0SJE6LECVHihChxQpQ4IUqcECVOiBInRIkTosQJUeKEKHFClDghSpwQJU6IEidEiROixAlR4oQocULU4fnj/uPaO+f7j2vP9ifM5dX+iI+u392eMC+dX21PmHt/f7w9weWEKnFClDghSpwQJU6IEidEiROixAlR4oQocUKUOCFKnBAlTogSJ0SJE6LECVHihChxQpQ4IUqcECVOiBInRIkTosQJUeKEKHFClDghSpwQJU6IEidEiROixAlRhy8++HN7w7z75T/bE+bG659uT5irbz7fnjBzPG4vmONPD7cnzC/ffrg9weWEKnFClDghSpwQJU6IEidEiROixAlR4oQocUKUOCFKnBAlTogSJ0SJE6LECVHihChxQpQ4IUqcECVOiBInRIkTosQJUeKEKHFClDghSpwQJU6IEidEiROixAlRh+8fvLK9Yd7/+qvtCfPos3e2J8zhuyfbE+bwycvbE+b07uPtCXP/tzvbE1xOqBInRIkTosQJUeKEKHFClDghSpwQJU6IEidEiROixAlR4oQocUKUOCFKnBAlTogSJ0SJE6LECVHihChxQpQ4IUqcECVOiBInRIkTosQJUeKEKHFClDghSpwQ9R/u0jxy+eNBIgAAAABJRU5ErkJggg==;" vertex="1" parent="1">
+          <mxGeometry x="110" y="210" width="160" height="200" as="geometry" />
+        </mxCell>
+        
+        <!-- Dashed Crosshairs -->
+        <mxCell id="vline" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#FF0000;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="190" y="410" as="sourcePoint" />
+            <mxPoint x="190" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hline" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#FF0000;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="110" y="310" as="sourcePoint" />
+            <mxPoint x="270" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Labels R_ij -->
+        <mxCell id="R00" value="&lt;font color=&quot;#ff3333&quot;&gt;&lt;b&gt;&lt;i&gt;R&lt;sub&gt;0,0&lt;/sub&gt;&lt;/i&gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;opacity=80;" vertex="1" parent="1">
+          <mxGeometry x="130" y="250" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="R01" value="&lt;font color=&quot;#ff3333&quot;&gt;&lt;b&gt;&lt;i&gt;R&lt;sub&gt;0,1&lt;/sub&gt;&lt;/i&gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;opacity=80;" vertex="1" parent="1">
+          <mxGeometry x="210" y="250" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="R10" value="&lt;font color=&quot;#ff3333&quot;&gt;&lt;b&gt;&lt;i&gt;R&lt;sub&gt;1,0&lt;/sub&gt;&lt;/i&gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;opacity=80;" vertex="1" parent="1">
+          <mxGeometry x="130" y="350" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="R11" value="&lt;font color=&quot;#ff3333&quot;&gt;&lt;b&gt;&lt;i&gt;R&lt;sub&gt;1,1&lt;/sub&gt;&lt;/i&gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;opacity=80;" vertex="1" parent="1">
+          <mxGeometry x="210" y="350" width="40" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Text below Refined Feature -->
+        <mxCell id="text_feat" value="&lt;b&gt;Refined Feature&lt;/b&gt;&lt;br&gt;&lt;i&gt;F&#39;&#39;&lt;sub&gt;S&lt;/sub&gt;&lt;/i&gt; (7 &amp;times; 7 &amp;times; &lt;i&gt;C&lt;/i&gt;)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="110" y="420" width="160" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- 2. 2x2 Pooled Grid -->
+        <mxCell id="Y00" value="&lt;i&gt;y&lt;sub&gt;0,0&lt;/sub&gt;&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="450" y="250" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Y01" value="&lt;i&gt;y&lt;sub&gt;0,1&lt;/sub&gt;&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="510" y="250" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Y10" value="&lt;i&gt;y&lt;sub&gt;1,0&lt;/sub&gt;&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="450" y="310" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Y11" value="&lt;i&gt;y&lt;sub&gt;1,1&lt;/sub&gt;&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="510" y="310" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Text below Pooled Grid -->
+        <mxCell id="text_pool" value="&lt;b&gt;Pooled Grid&lt;/b&gt;&lt;br&gt;2 &amp;times; 2 &amp;times; &lt;i&gt;C&lt;/i&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="450" y="380" width="120" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- 3. Flattened Vector -->
+        <mxCell id="V00" value="&lt;i&gt;y&lt;sub&gt;0,0&lt;/sub&gt;&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="750" y="160" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="V01" value="&lt;i&gt;y&lt;sub&gt;0,1&lt;/sub&gt;&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="750" y="220" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="V10" value="&lt;i&gt;y&lt;sub&gt;1,0&lt;/sub&gt;&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="750" y="280" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="V11" value="&lt;i&gt;y&lt;sub&gt;1,1&lt;/sub&gt;&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="750" y="340" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- 4. Arrows from R to Y -->
+        <mxCell id="arr1" style="edgeStyle=straightEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=1.5;strokeColor=#666666;endArrow=classic;" edge="1" parent="1" source="R00" target="Y00">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr2" style="edgeStyle=straightEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=1.5;strokeColor=#666666;endArrow=classic;" edge="1" parent="1" source="R01" target="Y01">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr3" style="edgeStyle=straightEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=1.5;strokeColor=#666666;endArrow=classic;" edge="1" parent="1" source="R10" target="Y10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr4" style="edgeStyle=straightEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=1.5;strokeColor=#666666;endArrow=classic;" edge="1" parent="1" source="R11" target="Y11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- AvgPool Text -->
+        <mxCell id="text_avg" value="AvgPool" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="340" y="260" width="60" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- 5. Flatten Arrow -->
+        <mxCell id="arr_flat_custom" value="Flatten" style="edgeStyle=straightEdgeStyle;rounded=0;html=1;strokeWidth=1.5;strokeColor=#666666;verticalAlign=bottom;endArrow=classic;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="570" y="280" as="sourcePoint" />
+            <mxPoint x="750" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 6. Curly Brace and Spatial Vector Text -->
+        <mxCell id="brace" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;flipH=1;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;strokeWidth=1.5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="820" y="160" width="20" height="240" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="text_vec" value="&lt;b&gt;Spatial Vector&lt;/b&gt; &lt;i&gt;v&lt;sub&gt;S&lt;/sub&gt;&lt;/i&gt;&lt;br&gt;4 &amp;times; 512 = 2048" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="850" y="250" width="160" height="60" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

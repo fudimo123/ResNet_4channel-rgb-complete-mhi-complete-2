@@ -1,0 +1,227 @@
+<mxfile host="app.diagrams.net" modified="2024-03-24T12:00:00.000Z" agent="Manual" etag="v1" version="21.0.0" type="device">
+  <diagram id="FusionNetwork" name="Asymmetric Fusion Network">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- ================= INPUTS ================= -->
+        <mxCell id="rgb_input" value="Static RGB&lt;br&gt;(224x224x3)" style="shape=image;html=1;verticalAlign=bottom;verticalLabelPosition=bottom;imageAspect=0;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="80" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="dyn_input" value="Dynamic Image&lt;br&gt;(224x224x3)" style="shape=image;html=1;verticalAlign=bottom;verticalLabelPosition=bottom;imageAspect=0;aspect=fixed;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="40" y="440" width="80" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- ================= BACKBONES ================= -->
+        <mxCell id="rgb_backbone" value="ResNet-18&lt;br&gt;Backbone" style="shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fixedSize=1;direction=south;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="180" y="160" width="80" height="200" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="dyn_backbone" value="ResNet-18&lt;br&gt;Backbone" style="shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fixedSize=1;direction=south;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="180" y="440" width="80" height="200" as="geometry" />
+        </mxCell>
+        
+        <!-- Feature Maps -->
+        <mxCell id="rgb_feat" value="512x7x7" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="420" y="170" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="dyn_feat" value="512x7x7" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="420" y="450" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ================= RGB BRANCH (CBAM + Grid) ================= -->
+        <mxCell id="cbam" value="CBAM&lt;br&gt;(Channel+Spatial)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="540" y="170" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="grid_pool" value="Grid Pooling&lt;br&gt;(2x2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="680" y="170" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="rgb_vec_raw" value="2048-dim" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="820" y="185" width="80" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="rgb_proj" value="Linear+ReLU" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="930" y="185" width="80" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="rgb_vec_final" value="512-dim" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1050" y="185" width="80" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ================= DYNAMIC BRANCH (SPP) ================= -->
+        <mxCell id="spp" value="SPP&lt;br&gt;(1x1, 2x2, 4x4)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="540" y="450" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="dyn_vec_raw" value="10752-dim" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="680" y="465" width="220" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="dyn_proj" value="Linear+ReLU" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="930" y="465" width="80" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="dyn_vec_final" value="512-dim" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1050" y="465" width="80" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ================= FUSION ================= -->
+        <mxCell id="concat_box" value="Concat" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1180" y="320" width="80" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="fused_vec" value="1024-dim" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1290" y="325" width="80" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ================= SE BLOCK ================= -->
+        <mxCell id="se_group" value="SE-Block (No GAP)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="400" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="se_fc1" value="FC(64)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="se_group">
+          <mxGeometry x="20" y="40" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="se_relu" value="ReLU" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="se_group">
+          <mxGeometry x="90" y="40" width="40" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="se_fc2" value="FC(1024)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="se_group">
+          <mxGeometry x="140" y="40" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="se_sigmoid" value="Sigmoid" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="se_group">
+          <mxGeometry x="210" y="40" width="50" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="se_mult" value="⊗" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=20;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1420" y="320" width="40" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ================= CLASSIFICATION ================= -->
+        <mxCell id="final_fc" value="FC + Dropout" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1500" y="320" width="100" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="output_pos" value="Pos" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="280" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="output_neg" value="Neg" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="320" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="output_sur" value="Sur" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="360" width="40" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ================= EDGES ================= -->
+        <mxCell id="e1" edge="1" parent="1" source="rgb_input" target="rgb_backbone">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="rgb_backbone" target="rgb_feat">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="rgb_feat" target="cbam">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="cbam" target="grid_pool">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="grid_pool" target="rgb_vec_raw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="rgb_vec_raw" target="rgb_proj">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="rgb_proj" target="rgb_vec_final">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e8" edge="1" parent="1" source="dyn_input" target="dyn_backbone">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="dyn_backbone" target="dyn_feat">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="dyn_feat" target="spp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="spp" target="dyn_vec_raw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="dyn_vec_raw" target="dyn_proj">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="dyn_proj" target="dyn_vec_final">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e14" edge="1" parent="1" source="rgb_vec_final" target="concat_box">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1160" y="200" />
+              <mxPoint x="1160" y="330" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="dyn_vec_final" target="concat_box">
+          <mxGeometry relative="1" as="geometry">
+             <Array as="points">
+              <mxPoint x="1160" y="480" />
+              <mxPoint x="1160" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="concat_box" target="fused_vec">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="e17" edge="1" parent="1" source="fused_vec" target="se_fc1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1330" y="455" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e18" edge="1" parent="se_group" source="se_fc1" target="se_relu">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" edge="1" parent="se_group" source="se_relu" target="se_fc2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e20" edge="1" parent="se_group" source="se_fc2" target="se_sigmoid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="e21" edge="1" parent="1" source="se_sigmoid" target="se_mult">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1510" y="455" />
+              <mxPoint x="1510" y="400" />
+              <mxPoint x="1440" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="e22" edge="1" parent="1" source="fused_vec" target="se_mult">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e23" edge="1" parent="1" source="se_mult" target="final_fc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="e24" edge="1" parent="1" source="final_fc" target="output_pos">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e25" edge="1" parent="1" source="final_fc" target="output_neg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e26" edge="1" parent="1" source="final_fc" target="output_sur">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

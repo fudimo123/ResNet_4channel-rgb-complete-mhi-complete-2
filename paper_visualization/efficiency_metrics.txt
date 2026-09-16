@@ -1,0 +1,12 @@
+==================================================
+Efficiency Metrics for Asymmetric Dual-Stream Network
+==================================================
+Model: LateFusionResNetSE (ResNet18 Backbone)
+Input Size: 224x224
+Device: cuda
+--------------------------------------------------
+Parameters (Params): 29.07 M
+FLOPs: 3.65 G
+Inference Speed (FPS): 246.86 frames/sec
+Average Latency: 4.05 ms
+==================================================

@@ -1,0 +1,310 @@
+\documentclass[tikz,border=20pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, 3d, calc, shapes, backgrounds, fit, shadows, decorations.pathreplacing}
+
+% --- Colors ---
+\definecolor{techblue}{RGB}{70, 130, 180}    % SteelBlue (RGB Stream)
+\definecolor{lightblue}{RGB}{180, 210, 255}
+\definecolor{warmorange}{RGB}{255, 140, 0}   % DarkOrange (Motion Stream)
+\definecolor{coralred}{RGB}{255, 100, 80}
+\definecolor{fusionpurple}{RGB}{148, 0, 211} % DarkViolet
+\definecolor{emeraldgreen}{RGB}{50, 205, 50} % LimeGreen
+\definecolor{text_black}{RGB}{0, 0, 0}
+\definecolor{cbam_purple}{RGB}{148, 0, 211}
+\definecolor{spp_gold}{RGB}{255, 215, 0}
+
+\begin{document}
+\begin{tikzpicture}[
+    x={(1cm,0cm)},       % x: horizontal
+    y={(0.5cm,0.25cm)},  % y: depth (3D perspective)
+    z={(0cm,1cm)},       % z: vertical
+    scale=0.55,          % Adjust scale for the new layout
+    every node/.style={transform shape, text=text_black, font=\sffamily\small},
+    >=Stealth
+]
+
+% =================================================================================
+% MACROS for 3D Drawing
+% =================================================================================
+% Draw a 3D Block (Cube/Cuboid)
+% #1: x, #2: y, #3: z (center)
+% #4: width (x), #5: depth (y), #6: height (z)
+% #7: color, #8: label, #9: opacity
+\newcommand{\DrawBlock}[9]{
+    % Back face (invisible mostly, but good for completeness)
+    \fill[#7, opacity=#9] (#1+#4/2, #2-#5/2, #3-#6/2) -- (#1-#4/2, #2-#5/2, #3-#6/2) -- (#1-#4/2, #2+#5/2, #3-#6/2) -- (#1+#4/2, #2+#5/2, #3-#6/2) -- cycle;
+    % Bottom face
+    \fill[#7, opacity=#9] (#1+#4/2, #2-#5/2, #3-#6/2) -- (#1-#4/2, #2-#5/2, #3-#6/2) -- (#1-#4/2, #2-#5/2, #3+#6/2) -- (#1+#4/2, #2-#5/2, #3+#6/2) -- cycle;
+    % Left face
+    \fill[#7, opacity=#9] (#1-#4/2, #2-#5/2, #3-#6/2) -- (#1-#4/2, #2+#5/2, #3-#6/2) -- (#1-#4/2, #2+#5/2, #3+#6/2) -- (#1-#4/2, #2-#5/2, #3+#6/2) -- cycle;
+    
+    % Top face (Visible)
+    \filldraw[fill=#7!80!white, draw=#7!40!black] (#1-#4/2, #2+#5/2, #3+#6/2) -- (#1+#4/2, #2+#5/2, #3+#6/2) -- (#1+#4/2, #2-#5/2, #3+#6/2) -- (#1-#4/2, #2-#5/2, #3+#6/2) -- cycle;
+    % Front face (Visible)
+    \filldraw[fill=#7, draw=#7!40!black] (#1-#4/2, #2-#5/2, #3+#6/2) -- (#1+#4/2, #2-#5/2, #3+#6/2) -- (#1+#4/2, #2-#5/2, #3-#6/2) -- (#1-#4/2, #2-#5/2, #3-#6/2) -- cycle;
+    % Right face (Visible)
+    \filldraw[fill=#7!60!black, draw=#7!40!black] (#1+#4/2, #2-#5/2, #3+#6/2) -- (#1+#4/2, #2+#5/2, #3+#6/2) -- (#1+#4/2, #2+#5/2, #3-#6/2) -- (#1+#4/2, #2-#5/2, #3-#6/2) -- cycle;
+    
+    % Label
+    \node[anchor=north, align=center, yshift=-0.2cm] at (#1, #2-#5/2, #3-#6/2) {#8};
+}
+
+% Draw a 3D Trapezoid (Backbone)
+% #1: x_start, #2: x_end, #3: z_center
+% #4: height_start, #5: height_end, #6: depth
+% #7: color, #8: label
+\newcommand{\DrawTrapezoid}[8]{
+    \def\xs{#1} \def\xe{#2} \def\zc{#3}
+    \def\hs{#4} \def\he{#5} \def\d{#6}
+    \def\col{#7}
+    
+    % Coordinates for front face
+    \coordinate (Fbl) at (\xs, -\d/2, \zc-\hs/2);
+    \coordinate (Ftl) at (\xs, -\d/2, \zc+\hs/2);
+    \coordinate (Fbr) at (\xe, -\d/2, \zc-\he/2);
+    \coordinate (Ftr) at (\xe, -\d/2, \zc+\he/2);
+    
+    % Coordinates for back face
+    \coordinate (Bbl) at (\xs, \d/2, \zc-\hs/2);
+    \coordinate (Btl) at (\xs, \d/2, \zc+\hs/2);
+    \coordinate (Bbr) at (\xe, \d/2, \zc-\he/2);
+    \coordinate (Btr) at (\xe, \d/2, \zc+\he/2);
+    
+    % Top face
+    \filldraw[fill=\col!80!white, draw=\col!40!black] (Ftl) -- (Ftr) -- (Btr) -- (Btl) -- cycle;
+    % Front face
+    \filldraw[fill=\col, draw=\col!40!black] (Fbl) -- (Fbr) -- (Ftr) -- (Ftl) -- cycle;
+    % Right face
+    \filldraw[fill=\col!60!black, draw=\col!40!black] (Fbr) -- (Bbr) -- (Btr) -- (Ftr) -- cycle;
+    
+    % Label on front face
+    \node[align=center, font=\bfseries] at ($(\xs, -\d/2, \zc)!0.5!(\xe, -\d/2, \zc)$) {#8};
+}
+
+% Vertical positions
+\def\zUp{7}
+\def\zDown{-7}
+
+% Common Operator Style
+\tikzstyle{op} = [circle, draw=black, thick, fill=white, inner sep=0pt, minimum size=0.5cm, font=\large, transform shape=false]
+
+% =================================================================================
+% PART 1: INPUTS
+% =================================================================================
+
+% --- Top Branch (RGB) ---
+\begin{scope}[canvas is yz plane at x=0]
+    \node[transform shape=false, inner sep=0, draw=black!30, thick, drop shadow] (rgb_img) at (0, \zUp) {
+        \includegraphics[width=3cm, height=3cm]{rgb_input.jpg}
+    };
+\end{scope}
+\node[below, align=center, yshift=-2.2cm, transform shape=false] at (0, 0, \zUp) {Static RGB Frame (Apex)};
+\draw[->, thick] (1.0, 0, \zUp) -- (2.5, 0, \zUp);
+
+% --- Bottom Branch (Dynamic) ---
+\begin{scope}[canvas is yz plane at x=0]
+    \node[transform shape=false, inner sep=0, draw=black!30, thick, drop shadow] (dyn_img) at (0, \zDown) {
+        \includegraphics[width=3cm, height=3cm]{dynamic_input.jpg}
+    };
+\end{scope}
+\node[below, align=center, yshift=-2.2cm, transform shape=false] at (0, 0, \zDown) {Dynamic Image (Motion)};
+\draw[->, thick] (1.0, 0, \zDown) -- (2.5, 0, \zDown);
+
+
+% =================================================================================
+% PART 2: BACKBONES
+% =================================================================================
+
+% --- RGB Backbone ---
+\DrawTrapezoid{3.0}{7.0}{\zUp}{3.0}{1.5}{2.0}{techblue}{ResNet-18\\Backbone}
+\draw[->, thick] (7.5, 0, \zUp) -- (8.5, 0, \zUp);
+
+% Output Feature Map (RGB)
+\DrawBlock{9.0}{0}{\zUp}{0.8}{2.0}{2.0}{techblue}{}{0.9}
+\node[below, transform shape=false] at (9.0, 0, \zUp-1.2) {$C \times H \times W$};
+
+% --- Dynamic Backbone ---
+\DrawTrapezoid{3.0}{7.0}{\zDown}{3.0}{1.5}{2.0}{warmorange}{ResNet-18\\Backbone}
+\draw[->, thick] (7.5, 0, \zDown) -- (8.5, 0, \zDown);
+
+% Output Feature Map (Dynamic)
+\DrawBlock{9.0}{0}{\zDown}{0.8}{2.0}{2.0}{warmorange}{}{0.9}
+\node[below, transform shape=false] at (9.0, 0, \zDown-1.2) {$C \times H \times W$};
+
+
+% =================================================================================
+% PART 3: ASYMMETRIC MODULES
+% =================================================================================
+
+% ---------------------------------------------------------
+% TOP: CBAM + Grid Pooling
+% ---------------------------------------------------------
+
+% --- CBAM ---
+\draw[->, thick] (9.5, 0, \zUp) -- (10.5, 0, \zUp);
+
+% 1. Channel Attention (Thin Slice)
+\DrawBlock{11.5}{0}{\zUp}{0.2}{2.0}{2.0}{red}{}{0.9}
+\node[op] (mul_ca) at (12.5, 0, \zUp) {$\otimes$};
+\draw[->, thick] (11.7, 0, \zUp) -- (mul_ca);
+
+% 2. Spatial Attention (Flat Grid)
+\draw[->, thick] (mul_ca) -- (13.5, 0, \zUp);
+\begin{scope}[canvas is yz plane at x=14.5]
+    \filldraw[fill=gray!20, draw=black, step=0.2] (-1, -1) grid (1, 1);
+\end{scope}
+\node[op] (mul_sa) at (15.5, 0, \zUp) {$\otimes$};
+\draw[->, thick] (14.6, 0, \zUp) -- (mul_sa);
+
+% CBAM Bracket
+\draw[decorate, decoration={brace, amplitude=10pt, mirror}, thick] (11.0, 0, \zUp-1.5) -- (15.8, 0, \zUp-1.5) node[midway, below=15pt, transform shape=false] {CBAM (Attention)};
+
+% --- Grid Pooling ---
+\draw[->, thick] (mul_sa) -- (16.5, 0, \zUp);
+
+% 7x7 Grid (Symbolic 2x2 split)
+\begin{scope}[canvas is yz plane at x=17.5]
+    \filldraw[fill=lightblue!30, draw=techblue, step=0.4] (-1, -1) grid (1, 1);
+    \draw[techblue!80!black, very thick] (0, -1) -- (0, 1);
+    \draw[techblue!80!black, very thick] (-1, 0) -- (1, 0);
+\end{scope}
+\node[below, transform shape=false] at (17.5, 0, \zUp-1.5) {Grid Pooling (2x2)};
+
+% Converging arrows to vector
+\coordinate (vec_rgb_start) at (21.0, 0, \zUp);
+\draw[->, thick, techblue] (17.6, 0.5, \zUp+0.5) to[out=0,in=180] (vec_rgb_start);
+\draw[->, thick, techblue] (17.6, -0.5, \zUp+0.5) to[out=0,in=180] (vec_rgb_start);
+\draw[->, thick, techblue] (17.6, 0.5, \zUp-0.5) to[out=0,in=180] (vec_rgb_start);
+\draw[->, thick, techblue] (17.6, -0.5, \zUp-0.5) to[out=0,in=180] (vec_rgb_start);
+
+% Spatial Vector (1D)
+\DrawBlock{22.5}{0}{\zUp}{3.0}{0.5}{0.5}{techblue}{}{0.9}
+
+
+% ---------------------------------------------------------
+% BOTTOM: SPP
+% ---------------------------------------------------------
+\draw[->, thick] (9.5, 0, \zDown) -- (11.0, 0, \zDown);
+
+% SPP Grids (Parallel in Z)
+\begin{scope}[canvas is yz plane at x=12.5]
+    % Level 1: 1x1
+    \filldraw[fill=spp_gold!40, draw=spp_gold!80!black, thick] (-0.8, 1.5) rectangle (0.8, 3.1);
+    \node[transform shape=false, font=\tiny] at (0, 2.3) {1x1};
+    
+    % Level 2: 2x2
+    \filldraw[fill=spp_gold!40, draw=spp_gold!80!black, thick, step=0.8] (-0.8, -0.8) grid (0.8, 0.8);
+    \node[transform shape=false, font=\tiny] at (0, 0) {2x2};
+    
+    % Level 3: 4x4
+    \filldraw[fill=spp_gold!40, draw=spp_gold!80!black, thick, step=0.4] (-0.8, -3.1) grid (0.8, -1.5);
+    \node[transform shape=false, font=\tiny] at (0, -2.3) {4x4};
+\end{scope}
+\node[below, transform shape=false] at (12.5, 0, \zDown-3.5) {Spatial Pyramid Pooling (SPP)};
+
+% Converging arrows
+\coordinate (vec_dyn_start) at (17.5, 0, \zDown);
+\draw[->, thick, warmorange] (12.6, 0, \zDown+2.3) to[out=0,in=180] ($(vec_dyn_start)-(3.0, 0, 0)$);
+\draw[->, thick, warmorange] (12.6, 0, \zDown) to[out=0,in=180] ($(vec_dyn_start)-(0, 0, 0)$);
+\draw[->, thick, warmorange] (12.6, 0, \zDown-2.3) to[out=0,in=180] ($(vec_dyn_start)+(3.0, 0, 0)$);
+
+% Temporal Vector (Super Long 1D)
+\DrawBlock{20.5}{0}{\zDown}{6.0}{0.5}{0.5}{warmorange}{}{0.9}
+
+
+% =================================================================================
+% PART 4: FUSION & SE-BLOCK
+% =================================================================================
+
+% Routing to Concat
+\coordinate (concat_x) at (26.0, 0, 0);
+
+\draw[->, very thick, techblue] (24.0, 0, \zUp) -- (25.0, 0, \zUp) -- (25.0, 0, 1.5) -- (26.0, 0, 1.5);
+\draw[->, very thick, warmorange] (23.5, 0, \zDown) -- (25.0, 0, \zDown) -- (25.0, 0, -1.5) -- (26.0, 0, -1.5);
+
+% Concat Vector
+\DrawBlock{27.5}{0}{1.5}{3.0}{0.5}{0.5}{techblue}{}{0.9}
+\DrawBlock{27.5}{0}{-1.5}{6.0}{0.5}{0.5}{warmorange}{}{0.9}
+\node[above, transform shape=false, font=\bfseries] at (27.5, 0, 2.5) {Concat};
+
+% Draw fused continuous vector for main path
+\DrawBlock{33.0}{0}{0}{8.0}{0.5}{0.5}{fusionpurple}{}{0.5} % Placeholder for full length, visually split
+% Let's make the fused vector look like a mix
+\begin{scope}[canvas is xz plane at y=0]
+    \fill[left color=techblue!60, right color=warmorange!60, draw=black, thick] (29.5, -0.5) rectangle (36.5, 0.5);
+\end{scope}
+
+\draw[->, thick] (29.0, 0, 0) -- (29.5, 0, 0);
+
+% --- SE Block (U-Shape) ---
+\def\seBottomY{-5.5} % Moved SE block further down
+
+% Arrow down
+\draw[->, thick, fusionpurple] (30.0, 0, -0.5) -- (30.0, \seBottomY, 0) -- (30.5, \seBottomY, 0);
+
+% GAP
+\DrawBlock{31.0}{\seBottomY}{0}{1.0}{0.8}{0.8}{white}{GAP}{1.0}
+\draw[->, thick, fusionpurple] (31.5, \seBottomY, 0) -- (32.0, \seBottomY, 0);
+
+% FC1
+\DrawBlock{32.2}{\seBottomY}{0}{0.4}{0.5}{0.5}{fusionpurple!50}{FC}{1.0}
+\draw[->, thick, fusionpurple] (32.4, \seBottomY, 0) -- (32.8, \seBottomY, 0);
+
+% ReLU
+\node[op, draw=fusionpurple, text=fusionpurple] (relu) at (33.1, \seBottomY, 0) {$\delta$};
+\draw[->, thick, fusionpurple] (33.4, \seBottomY, 0) -- (33.8, \seBottomY, 0);
+
+% FC2
+\DrawBlock{34.0}{\seBottomY}{0}{0.4}{0.8}{0.8}{fusionpurple!50}{FC}{1.0}
+\draw[->, thick, fusionpurple] (34.2, \seBottomY, 0) -- (34.6, \seBottomY, 0);
+
+% Sigmoid
+\node[op, draw=fusionpurple, text=fusionpurple] (sig) at (34.9, \seBottomY, 0) {$\sigma$};
+\draw[->, thick, fusionpurple] (35.2, \seBottomY, 0) -- (35.6, \seBottomY, 0);
+
+% Weight w (Gradient)
+\begin{scope}[canvas is xy plane at z=0]
+    \filldraw[left color=white, right color=fusionpurple, draw=black] (35.6, \seBottomY-0.4) rectangle (36.1, \seBottomY+0.4);
+\end{scope}
+\node[below, transform shape=false] at (35.85, \seBottomY, -0.6) {$w$};
+
+% Arrow up
+\draw[->, thick, fusionpurple] (35.85, \seBottomY+0.5, 0) -- (35.85, -1.0, 0);
+
+% Main path multiplier
+\node[op, draw=fusionpurple, thick] (mul_fused) at (35.85, 0, 0) {$\otimes$};
+\draw[->, thick] (36.5, 0, 0) -- (mul_fused);
+
+% Dotted box for SE
+\draw[dashed, thick, fusionpurple] (30.0, \seBottomY-1.5, 0) rectangle (36.5, \seBottomY+1.0, 0);
+\node[below, text=fusionpurple, transform shape=false] at (33.25, \seBottomY-1.5, 0) {SE-Attention (Channel Recalibration)};
+
+
+% =================================================================================
+% PART 5: CLASSIFICATION
+% =================================================================================
+
+% Fused Feature
+\draw[->, thick] (mul_fused) -- (37.5, 0, 0);
+\begin{scope}[canvas is xz plane at y=0]
+    \fill[left color=fusionpurple!30, right color=emeraldgreen!50, draw=black, thick] (37.5, -0.5) rectangle (40.5, 0.5);
+\end{scope}
+\node[above, transform shape=false] at (39.0, 0, 0.8) {Fused Feature};
+
+% FC & Dropout
+\draw[->, thick] (40.5, 0, 0) -- (41.5, 0, 0);
+\DrawBlock{42.5}{0}{0}{2.0}{1.5}{1.5}{emeraldgreen}{FC \&\\Dropout}{0.8}
+
+% Output Nodes
+\coordinate (out_start) at (43.5, 0, 0);
+
+\node[circle, fill=emeraldgreen!20, draw=emeraldgreen!80, thick, minimum size=1.0cm, transform shape=false] (pos) at (45.5, 0, 2.0) {Positive};
+\node[circle, fill=emeraldgreen!20, draw=emeraldgreen!80, thick, minimum size=1.0cm, transform shape=false] (neg) at (45.5, 0, 0) {Negative};
+\node[circle, fill=emeraldgreen!20, draw=emeraldgreen!80, thick, minimum size=1.0cm, transform shape=false] (sur) at (45.5, 0, -2.0) {Surprise};
+
+\draw[->, thick, emeraldgreen] (out_start) -- (pos.west);
+\draw[->, thick, emeraldgreen] (out_start) -- (neg.west);
+\draw[->, thick, emeraldgreen] (out_start) -- (sur.west);
+
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,19 @@
+{
+  "raw_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\data\\SAMM",
+  "excel_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\data\\SAMM\\SAMM_Micro_FACS_Codes_v2.xlsx",
+  "output_rgb_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\SAMM_fusion_train_clean copy\\samm_aligned_rgb_evm_classic_fft_ideal",
+  "output_dyn_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\SAMM_fusion_train_clean copy\\samm_dynamic_data_evm_classic_fft_ideal",
+  "fps": 200.0,
+  "freq_low": 0.4,
+  "freq_high": 3.0,
+  "alpha": 10.0,
+  "levels": 3,
+  "lambda_cutoff": 16.0,
+  "chrom_attenuation": 0.1,
+  "filter_type": "ideal",
+  "butter_order": 1,
+  "total_sequences": 133,
+  "done": 133,
+  "skipped": 0,
+  "failed": 0
+}

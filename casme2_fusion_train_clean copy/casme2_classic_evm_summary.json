@@ -1,0 +1,21 @@
+{
+  "raw_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\data\\CASME2_RAW_selected\\CASME2_RAW_selected",
+  "excel_path": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\data\\CASME2_RAW_selected\\CASME2-coding-20140508.xlsx",
+  "output_rgb_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\casme2_fusion_train_clean copy\\casme2_aligned_rgb_evm_classic_fft_ideal",
+  "output_dyn_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\casme2_fusion_train_clean copy\\casme2_dynamic_data_evm_classic_fft_ideal",
+  "fps": 200.0,
+  "freq_low": 0.4,
+  "freq_high": 3.0,
+  "alpha": 10.0,
+  "levels": 3,
+  "lambda_cutoff": 16.0,
+  "chrom_attenuation": 0.1,
+  "filter_type": "ideal",
+  "butter_order": 1,
+  "subject_min": null,
+  "subject_max": null,
+  "total_sequences": 156,
+  "done": 0,
+  "skipped": 156,
+  "failed": 0
+}

@@ -1,0 +1,59 @@
+{
+    "RESULT_DIR": "fusion_result_asym_grid_cbam_ls",
+    "NUM_EPOCHS": 60,
+    "BATCH_SIZE": 16,
+    "LEARNING_RATE": 0.0005,
+    "WEIGHT_DECAY": 0.0001,
+    "WARMUP_EPOCHS": 8,
+    "CLIP_GRAD_NORM": 1.0,
+    "MODEL": "Late Fusion ResNet-18 with AdamW, Grad Clip, CosineAnnealingLR",
+    "rgb_train_transform": {
+        "Resize": {
+            "size": [
+                224,
+                224
+            ]
+        },
+        "RandomRotation": {
+            "degrees": 3
+        },
+        "ToTensor": {},
+        "Normalize": {
+            "mean": [
+                0.485,
+                0.456,
+                0.406
+            ],
+            "std": [
+                0.229,
+                0.224,
+                0.225
+            ]
+        }
+    },
+    "dynamic_train_transform": {
+        "Resize": {
+            "size": [
+                224,
+                224
+            ]
+        },
+        "RandomRotation": {
+            "degrees": 3
+        },
+        "ToTensor": {},
+        "Normalize": {
+            "mean": [
+                0.485,
+                0.456,
+                0.406
+            ],
+            "std": [
+                0.229,
+                0.224,
+                0.225
+            ]
+        }
+    },
+    "fusion_architecture": "Late fusion at feature level (RGB: 512 + Dynamic: 512 -> 1024 -> 3 classes)"
+}

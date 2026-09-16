@@ -1,0 +1,31 @@
+graph LR
+  subgraph RGB_Branch
+    A[Input RGB 3x224x224] --> B[Stem Conv7x7 s2 BN ReLU MaxPool]
+    B --> C[layer1]
+    C --> D[layer2]
+    D --> E[layer3]
+    E --> F[layer4 512ch]
+    F --> G[SPP levels 1,2,4 concat]
+    G --> H[Dropout 0.1]
+    H --> I[Linear 512 ReLU]
+  end
+
+  subgraph Dynamic_Branch
+    A2[Input Dynamic 3x224x224] --> B2[Stem Conv7x7 s2 BN ReLU MaxPool]
+    B2 --> C2[layer1]
+    C2 --> D2[layer2]
+    D2 --> E2[layer3]
+    E2 --> F2[layer4 512ch]
+    F2 --> G2[SPP levels 1,2,4 concat]
+    G2 --> H2[Dropout 0.1]
+    H2 --> I2[Linear 512 ReLU]
+  end
+
+  I --> K[Concat 1024]
+  I2 --> K
+
+  K --> L[Fusion SE MLP 1024-64-1024 Sigmoid]
+  K --> M[Residual gating K + K*L]
+  M --> N[Dropout 0.5]
+  N --> O[FC 1024 to num_classes]
+  O --> P[Logits]

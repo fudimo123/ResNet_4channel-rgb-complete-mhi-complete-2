@@ -1,0 +1,6 @@
+Method,Accuracy,F1-Score,UAR,UF1
+ResNet18 (RGB only),0.7543,0.6818,0.6767,0.6818
+ResNet18 (Dynamic Image only),0.8728,0.8563,0.8772,0.8563
+ResNet18 (RGB + Dynamic Fusion),0.8821,0.8597,0.8597,0.8597
+ResNet18+SPP (Spatial Pyramid Pooling),0.9176,0.9029,0.8784,0.9029
+ResNet18+SPP+Transfer Learning (JAFFE),0.9241,0.9054,0.9022,0.9054

@@ -1,0 +1,47 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#ffffff',
+    'primaryColor': '#ffffff',
+    'secondaryColor': '#f8f9fa',
+    'tertiaryColor': '#e9ecef',
+    'fontFamily': 'Times New Roman, STSong, SimSun, serif',
+    'fontSize': '14px',
+    'lineColor': '#2b2d42',
+    'textColor': '#000000',
+    'mainBkg': '#ffffff',
+    'clusterBkg': '#ffffff',
+    'clusterBorder': '#2b2d42'
+  }
+}}%%
+graph LR
+  A[开始] --> B[加载注释文件]
+  B --> C[遍历样本]
+  C --> D[读取帧 起始到结束]
+  D --> E[计算权重 c_i]
+  E --> F[初始化累加器 acc=0]
+  F --> G[循环 i=1..N]
+  G --> H[累加 acc = acc + c_i * frame_i]
+  H --> I[归一化到 0-255]
+  I --> J[保存第 i 步 到动态步骤]
+  J --> K{是否还有帧}
+  K -->|是| G
+  K -->|否| L[最终动态成像 第 N 步]
+  L --> M[结束]
+
+classDef terminal fill:#ffffff,stroke:#1f2d3d,stroke-width:2px,color:#000000,rx:6,ry:6;
+classDef process fill:#f7f7f8,stroke:#2b2d42,stroke-width:1.5px,color:#000000,rx:4,ry:4;
+classDef processAlt fill:#f0f7ff,stroke:#1d3557,stroke-width:1.5px,color:#0b1f3b,rx:4,ry:4;
+classDef processAccent fill:#fff0f6,stroke:#5c2a4a,stroke-width:1.5px,color:#2a0e21,rx:4,ry:4;
+classDef io fill:#eef5ff,stroke:#2b4c7e,stroke-width:1.5px,color:#0b1f3b,rx:4,ry:4;
+classDef ioAlt fill:#e8fff4,stroke:#2a9d8f,stroke-width:1.5px,color:#0b3d3a,rx:4,ry:4;
+classDef decision fill:#fff4d6,stroke:#946c00,stroke-width:1.5px,color:#3b2c00,rx:8,ry:8;
+
+class A,M terminal;
+class B,J io;
+class L ioAlt;
+class C,E,G,I processAlt;
+class D,F,H processAccent;
+class K decision;
+
+linkStyle default stroke:#2b2d42,stroke-width:1.25px;

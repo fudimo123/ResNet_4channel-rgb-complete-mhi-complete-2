@@ -1,0 +1,7 @@
+model_key,display_name,branch_type,feature_strategy,fusion_strategy,pretraining,device,batch_size,input_height,input_width,warmup_iters,measure_iters,fps,latency_ms
+baseline_s,Baseline-S,single_rgb,ResNet18 + GAP,/,ImageNet,cuda,1,224,224,50,200,476.9917862699453,2.0964721590280533
+baseline_d,Baseline-D,single_dynamic,ResNet18 + GAP,/,ImageNet,cuda,1,224,224,50,200,439.8927465515301,2.273281402885914
+model_a,Model A,dual,RGB ResNet18(GAP) + Dynamic ResNet18(GAP),Direct Concat,ImageNet,cuda,1,224,224,50,200,226.36978003018754,4.417550787329674
+model_b,Model B,dual,RGB ResNet18(SPP) + Dynamic ResNet18(SPP),Direct Concat,ImageNet,cuda,1,224,224,50,200,205.79787128382563,4.859136752784252
+model_c,Model C,dual,RGB Grid+CBAM + Dynamic SPP,Direct Concat,ImageNet,cuda,1,224,224,50,200,197.51394138052825,5.062933750450611
+adf_net,ADF-Net,dual,RGB Grid+CBAM + Dynamic SPP,SE Fusion,ImageNet,cuda,1,224,224,50,200,214.6092833909314,4.659630674868822

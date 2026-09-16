@@ -1,0 +1,8 @@
+{
+  "input_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\casme2_fusion_train_clean copy\\casme2_aligned_rgb_evm_classic_butter_o1",
+  "output_dir": "D:\\Users\\fuziyan\\PycharmProjects\\ResNet_4channel-rgb-complete-mhi-complete-2\\casme2_fusion_train_clean copy\\casme2_static_decalcomanie_evm_classic_butter_o1",
+  "total_sequences": 156,
+  "done": 151,
+  "skipped": 5,
+  "failed": 0
+}
